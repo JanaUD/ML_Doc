@@ -1,1 +1,40 @@
+Código para utilización PCA que permite visualizar gráficas en 2D una base de datos de MNIST
+
+!pip install numpy
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.datasets import fetch_openml
+
+# Cargar los datos de MNIST desde OpenML
+mnist = fetch_openml('mnist_784', version=1, as_frame=False)
+
+# Extraer las imágenes y etiquetas
+X = mnist.data  # Matriz de características (70,000 imágenes de 784 píxeles cada una)
+y = mnist.target.astype(int)  # Etiquetas de los dígitos
+
+# Aplicar PCA con 2 componentes
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X)
+
+# Definir una paleta de colores para los dígitos
+plt.figure(figsize=(10, 8))
+scatter = plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis', alpha=0.7, s=15)
+
+# Añadir la barra de color con el nuevo label
+plt.colorbar(scatter, label="Dígitos", ticks=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+# Etiquetas y título
+plt.xlabel("Componente Principal 1 - Dirección de máxima varianza")
+plt.ylabel("Componente Principal 2 - Dirección perpendicular a PC1")
+plt.title("VISUALIZACIÓN DE MNIST EN 2D USANDO PCA")
+
+# Mostrar la gráfica
+plt.show()
+print("")
+print ("Jannet Ortiz Aguilar") 
+
+RESULTADOS
+
 
