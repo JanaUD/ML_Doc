@@ -2,3 +2,102 @@ Make the Decision Tree algorithm for categories
 Explore the scikit-learn algorithms
 DecisionTreeClassifier
 RandomForestClassifier
+
+
+!pip install numpy
+
+# Manejo de arreglos y matrices numéricas
+import numpy as np
+
+# Sklearn: Algoritmos de Machine Learning, preprocesamiento y métricas
+# Se convierten datos categóricos en números
+from sklearn.preprocessing import LabelEncoder
+
+# Se dividen los datos en entrenamiento y prueba
+from sklearn.model_selection import train_test_split
+
+# Modelo de Árbol de Decisión y se mide la precisión del modelo
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+# Se muestran las métricas de rendimiento
+from sklearn.metrics import classification_report
+
+# Se gráfica y se dibuja el árbol de decisión
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+# Tiene algoritmos de herramientas estadísticas avanzadas
+from scipy.stats import entropy
+
+# Datos en formato numpy (datos categóricos)
+data = np.array([
+    ["G", "G", "R", "E"],
+    ["R", "G", "B", "M"],
+    ["B", "R", "G", "A"],
+    ["G", "R", "G", "E"],
+    ["R", "B", "R", "A"],
+    ["G", "G", "G", "E"],
+    ["B", "G", "R", "M"],
+    ["R", "R", "R", "M"],
+    ["G", "B", "G", "A"],
+    ["B", "B", "B", "A"]
+])
+
+# Se separan las características (X) y variable objetivo (y)
+# Las 3 primeras columnas representan las calificaciones de las asignaturas Matemáticas (Ma), Ciencias (Sc), e Inglés (En)
+X = data[:, :-1]
+# La última columna representa las preferencias de las carreras (Pc)
+y = data[:, -1]
+
+# Cálculo de la entropía antes de construir el árbol
+unique, counts = np.unique(y, return_counts=True)
+probabilities = counts / counts.sum()
+H = entropy(probabilities, base=2)
+print("Entropía del conjunto de datos:", H)
+
+# Se codifican datos categóricos a números correctamente
+label_encoders = [LabelEncoder() for _ in range(X.shape[1])]  # Un encoder por cada columna
+X_encoded = np.array([le.fit_transform(X[:, i]) for i, le in enumerate(label_encoders)]).T
+
+# Se codifica la variable objetivo
+encoder_y = LabelEncoder()
+y_encoded = encoder_y.fit_transform(y)
+
+# Se divide en entrenamiento y prueba
+X_train, X_test, y_train, y_test = train_test_split(X_encoded, y_encoded, test_size=0.3, random_state=42)
+
+# Se entrena el modelo
+clf = DecisionTreeClassifier(criterion="entropy", random_state=42)
+clf.fit(X_train, y_train)
+
+# Se predece y evalua el modelo
+y_pred = clf.predict(X_test)
+print("Precisión del modelo:", accuracy_score(y_test, y_pred))
+print("Reporte de clasificación:")
+print(classification_report(y_test, y_pred))
+
+# Se visualiza el árbol de decisión
+plt.figure(figsize=(14, 6))
+plot_tree(clf, feature_names=["Ma", "Sc", "En"], class_names=encoder_y.classes_, filled=True)
+plt.show()
+
+print("")
+print("Jannet Ortiz Aguilar")
+
+Entropía del conjunto de datos: 1.570950594454669
+Precisión del modelo: 0.6666666666666666
+Reporte de clasificación:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00         1
+           1       0.50      1.00      0.67         1
+           2       0.00      0.00      0.00         1
+
+    accuracy                           0.67         3
+   macro avg       0.50      0.67      0.56         3
+weighted avg       0.50      0.67      0.56         3
+
+
+
+
+Jannet Ortiz Aguilar
