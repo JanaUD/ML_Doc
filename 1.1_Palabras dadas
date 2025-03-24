@@ -1,2 +1,21 @@
-código para encontrar palabras con letras establecidas
+Código para encontrar palabras con letras establecidas
 
+# Libreria que se usa para expresiones regulares
+import re 
+archivo = "5000_palabras_comunes.txt"
+# ¿Cuáles son las letras con las que quiere buscar las palabras?
+# Mantener el símbolo $ al final de las letras y escribir todo en comillas
+# Ejm "ión$"
+terminacion = "das$"  
+
+# Función para leer las lineas del archivo
+with open(archivo, "r", encoding="utf-8") as f:
+  palabras = f.read().splitlines()  # Lee todas las líneas y las convierte en una lista
+
+# Función para filtrar palabras que terminan con la terminación escogida
+palabras_filtradas = [palabra for palabra in palabras if re.search(terminacion, palabra)]
+
+# Mostrar las palabras encontradas
+print("Palabras que terminan con 'das':")
+print(palabras_filtradas)
+print("")
