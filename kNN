@@ -1,3 +1,0 @@
-* How can you evaluate the hypothesis that the problem with almost all predictions giving `Medium` is due to the disproportionate data in that column?
-* Predict the numeric variable `Study_Hours_per_Week_normalized`, determine the error for each `k` and choice the best `k`.
-* Add new variables that can improve performance.
