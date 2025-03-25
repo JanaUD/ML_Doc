@@ -105,7 +105,7 @@ Jannet Ortiz Aguilar
 
 Explore the scikit-learn algorithms
 
-DecisionTreeClassifier 
+ 
 import numpy as np 
 import pandas as pd from sklearn.tree 
 import DecisionTreeClassifier, plot_tree from sklearn.preprocessing 
@@ -158,3 +158,47 @@ RESULTADOS
 https://github.com/JanaUD/ML_Doc/blob/9e5b365b21ed54700b7bac2a3166c1afa06d91ea/Arbol%20de%20decisiones-DecisionTreeClassifier.png
 
 Jannet Ortiz Aguilar
+
+
+APLICACIÓN AL PROYECTO (Campos Electromagnéticos) 
+
+
+# Inicio del código 
+import numpy as np
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
+import matplotlib.pyplot as plt
+
+data = [
+    ["Rango alto", "Rango estandar", "Rango estandar", "Rango bajo", "No optimo"],
+    ["Rango alto", "Rango estandar", "Rango bajo", "Rango bajo", "No optimo"],
+    ["Rango alto", "Rango alto", "Rango estandar", "Rango bajo", "Intermedio"],
+    ["Rango alto", "Rango alto", "Rango estandar", "Rango estandar", "Intermedio"],
+    ["Rango alto", "Rango alto", "Rango alto", "Rango estandar", "optimo"],
+    ["Rango alto", "Rango alto", "Rango alto", "Rango alto", "optimo"],
+]
+
+features = ["Math", "Science", "English"]
+target_col = 3
+
+X_categorical = np.array([row[:3] for row in data])
+y = np.array([row[3] for row in data])
+
+# One-hot encode categorical features
+encoder = OneHotEncoder()
+X_encoded = encoder.fit_transform(X_categorical)
+
+# Train decision tree with categorical data
+dt = DecisionTreeClassifier(criterion="entropy", random_state=42)
+dt.fit(X_encoded, y)
+
+# Visualize tree
+plt.figure(figsize=(12, 8))
+tree.plot_tree(dt, feature_names=encoder.get_feature_names_out(features), class_names=["Engineering", "Medicine", "Arts"], filled=True)
+plt.show()
+
+print("")
+print ("Jannet Ortiz Aguilar")
+
+
