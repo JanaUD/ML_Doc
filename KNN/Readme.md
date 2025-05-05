@@ -73,3 +73,5 @@ plt.show()
 best_result = results_df.loc[results_df['mse'].idxmin()]
 print("\n🔍 Mejor combinación:")
 print(best_result)
+
+![image](https://github.com/user-attachments/assets/0feda55f-6e35-4e4a-9aef-d144cd3e0a32)
