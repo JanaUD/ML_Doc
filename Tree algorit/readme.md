@@ -197,7 +197,7 @@ tree.fit(X, y, feature_names=feature_names, class_names=class_names)
 print("Árbol de Decisión Categórico:")
 tree.visualize()
 
-# Se Prediden los nuevos datos
+# Se Predicen los nuevos datos
 new_data = np.array([
     ["G", "G", "R"],
     ["B", "B", "G"]
@@ -208,4 +208,5 @@ print("\nPredicciones para nuevos datos:")
 for i, pred in enumerate(predictions):
     print(f"Instancia {i+1}: Predicción = {pred}")
 
-    ![image](https://github.com/user-attachments/assets/4423053d-7622-40bc-ac02-8533112779ed)
+  ![image](https://github.com/user-attachments/assets/4a7595f6-e20e-4560-bab3-474279244eb6)
+
