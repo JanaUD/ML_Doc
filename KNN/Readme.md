@@ -1,4 +1,4 @@
-""" Para determinar el valor óptimo de k en el modelo KNN, el código implementado es un flujo estructurado que incluye:
+""" Introducción: para determinar el valor óptimo de k en el modelo KNN, el código implementado es un flujo estructurado que incluye:
 1) División de datos (train_test_split) para entrenamiento y prueba.
 2) Normalización (StandardScaler) para estandarizar las variables.
 3) Evaluación iterativa de múltiples valores de *k* (1 a 20).
@@ -449,6 +449,6 @@ print("="*50)
 ![image](https://github.com/user-attachments/assets/bab089a4-7e3d-4353-8dc0-75f7416cbfe5)
 
 
-
+"""Conclusión: el análisis realizado permitió optimizar el modelo KNN mediante la identificación del mejor valor de *k*, logrando un equilibrio óptimo entre precisión y generalización. La evaluación sistemática con métricas como el RMSE y técnicas de preprocesamiento (normalización y balanceo de datos) aseguró la robustez del modelo. Respecto a la hipótesis inicial —que sugería un posible sesgo hacia predicciones en la categoría "Medium"—, se verificó que, tras el balanceo y ajuste de hiperparámetros, el modelo no presenta este comportamiento, generando predicciones equilibradas y confiables. El código no solo cumple con su objetivo predictivo, sino que también ofrece un marco reproducible para futuros análisis con garantías estadísticas."""
 
 
