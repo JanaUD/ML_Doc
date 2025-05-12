@@ -423,6 +423,15 @@ print("="*50)
 
 ![image](https://github.com/user-attachments/assets/d1e1e3e4-0f79-4fef-bc2d-0e86b65000d2)
 
+![image](https://github.com/user-attachments/assets/c7359dac-6415-41d5-9eeb-c806fb6e883d)
+
+🔢 Columnas numéricas para análisis: ['Gender_Female', 'Gender_Male', 'Age', 'Department_Business', 'Department_CS', 'Department_Engineering', 'Department_Mathematics', 'Attendance (%)', 'Midterm_Score', 'Final_Score', 'Assignments_Avg', 'Quizzes_Avg', 'Participation_Score', 'Projects_Score', 'Total_Score', 'Grade_A', 'Grade_B', 'Grade_C', 'Grade_D', 'Grade_F', 'Extracurricular_Activities_No', 'Extracurricular_Activities_Yes', 'Internet_Access_at_Home_No', 'Internet_Access_at_Home_Yes', "Parent_Education_Level_Bachelor's", 'Parent_Education_Level_High School', "Parent_Education_Level_Master's", 'Parent_Education_Level_None', 'Parent_Education_Level_PhD', 'Family_Income_Level_High', 'Family_Income_Level_Low', 'Family_Income_Level_Medium', 'Stress_Level (1-10)', 'Sleep_Hours_per_Night']
+
+![image](https://github.com/user-attachments/assets/553f383f-7cad-416a-ad04-a4f8cae867d2)
+
+![image](https://github.com/user-attachments/assets/ef1c1b1c-3c90-41f5-8286-232559ad44b3)
+
+![image](https://github.com/user-attachments/assets/04a02d7f-990e-4051-8c8f-847f3f56d72f)
 
 
 
