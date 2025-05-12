@@ -1,4 +1,12 @@
-# -*- coding: utf-8 -*-
+""" Para determinar el valor óptimo de k en el modelo KNN, el código implementado es un flujo estructurado que incluye:
+1) División de datos (train_test_split) para entrenamiento y prueba.
+2) Normalización (StandardScaler) para estandarizar las variables.
+3) Evaluación iterativa de múltiples valores de *k* (1 a 20).
+4) Cálculo del RMSE para medir el error en cada iteración.
+5) Selección automática del *k* con menor error (np.argmin).
+Estos componentes, respaldados por visualizaciones claras, aseguran un equilibrio entre precisión y generalización, evitando sobreajuste (*k* bajo) o subajuste (*k* alto). El proceso es reproducible y sistemático."""
+
+# -*- código-*-
 """KNN_Regresion_Analisis_Estadistico_Completo_Corregido.ipynb
 
 Código completo con:
@@ -306,7 +314,6 @@ if class_distribution.max() > 0.7:  # Si una clase tiene más del 70%
 else:
     print("\n✅ Los datos están balanceados, procediendo sin ajustes")
 
-# Resto del código permanece igual...
 # Escalado
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
@@ -432,6 +439,16 @@ print("="*50)
 ![image](https://github.com/user-attachments/assets/ef1c1b1c-3c90-41f5-8286-232559ad44b3)
 
 ![image](https://github.com/user-attachments/assets/04a02d7f-990e-4051-8c8f-847f3f56d72f)
+
+![image](https://github.com/user-attachments/assets/ad8a3c34-f61c-4e0b-b7dd-5ffe98137ffe)
+
+![image](https://github.com/user-attachments/assets/ea317878-04b0-4011-a3ce-bf8c5628aa88)
+
+![image](https://github.com/user-attachments/assets/b90c3f35-21e4-4d92-8fdb-a931493ce455)
+
+![image](https://github.com/user-attachments/assets/bab089a4-7e3d-4353-8dc0-75f7416cbfe5)
+
+
 
 
 
