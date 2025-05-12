@@ -451,7 +451,8 @@ print("="*50)
 
 Nota: en el siguiente link: https://colab.research.google.com/?hl=es&authuser=1#scrollTo=oQqvzcF15Wpo&uniqifier=3, se encuentran una revisión del código para las variables objetivas: 
 
-![image](https://github.com/user-attachments/assets/51242d06-4df8-42e4-bd5c-485bed0438d7)
+![image](https://github.com/user-attachments/assets/5a3ea010-ccb9-48d7-937c-74588334e511)
+
 
 """Conclusión: es posible que los resultados finales analizados del modelo KNN revelen un claro fracaso predictivo, evidenciado por el coeficientes R² negativos (entre -0.08 y -0.03) en todas las variables analizadas, lo que indica que el modelo es menos útil que predecir el valor medio. Adicionalmente, aunque algunas variables como Age mostraron un RMSE relativamente bajo (2.02), esto no compensa la incapacidad del modelo para explicar patrones en los datos. Por otro lado, el balanceo evitó sesgos hacia categorías específicas (como Medium), pero no resolvió el problema central: el KNN no captura relaciones significativas en este conjunto de datos"""
 
