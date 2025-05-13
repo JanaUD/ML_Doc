@@ -456,3 +456,179 @@ Nota: en el siguiente link: https://colab.research.google.com/?hl=es&authuser=1#
 
 """Conclusión: es posible que los resultados finales analizados del modelo KNN revelen un claro fracaso predictivo, evidenciado por el coeficientes R² negativos (entre -0.08 y -0.03) en todas las variables analizadas, lo que indica que el modelo es menos útil que predecir el valor medio. Adicionalmente, aunque algunas variables como Age mostraron un RMSE relativamente bajo (2.02), esto no compensa la incapacidad del modelo para explicar patrones en los datos. Por otro lado, el balanceo evitó sesgos hacia categorías específicas (como Medium), pero no resolvió el problema central: el KNN no captura relaciones significativas en este conjunto de datos"""
 
+Por lo que ahora vamos a entrenar el modelo
+
+# =============================================
+# IMPORTACIÓN DE LIBRERÍAS
+# =============================================
+import polars as pl
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from imblearn.over_sampling import SMOTE
+from tqdm import tqdm
+
+# =============================================
+# CARGA Y PREPROCESAMIENTO DE DATOS
+# =============================================
+print("🔹 Cargando y preprocesando datos...")
+df = pl.read_csv("Students_Grading_Dataset.csv")
+
+# Eliminar columnas irrelevantes
+df = df.drop(["Student_ID", "First_Name", "Last_Name", "Email"])
+
+# Codificación de variables categóricas
+categorical_cols = [
+    "Gender", "Department", "Grade", "Extracurricular_Activities",
+    "Internet_Access_at_Home", "Parent_Education_Level", "Family_Income_Level"
+]
+
+label_encoders = {}
+for col in categorical_cols:
+    le = LabelEncoder()
+    df = df.with_columns(pl.Series(name=col, values=le.fit_transform(df[col].to_list())))
+    label_encoders[col] = le
+
+class_names = label_encoders["Grade"].classes_
+
+# Separar variables predictoras y objetivo
+X = df.drop("Grade").to_numpy()
+y = df["Grade"].to_numpy()
+
+# División del conjunto de datos
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, stratify=y, random_state=42
+)
+
+# Balanceo con SMOTE
+print("🔹 Aplicando SMOTE...")
+smote = SMOTE(random_state=42)
+X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
+
+# Normalización
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train_balanced)
+X_test_scaled = scaler.transform(X_test)
+
+# =============================================
+# BÚSQUEDA DE HIPERPARÁMETROS
+# =============================================
+print("\n🔍 Buscando el mejor k y tipo de pesos...")
+param_grid = {
+    "n_neighbors": range(3, 15),
+    "weights": ["uniform", "distance"],
+    "metric": ["euclidean", "manhattan"]
+}
+
+grid_search = GridSearchCV(
+    estimator=KNeighborsClassifier(),
+    param_grid=param_grid,
+    scoring="accuracy",
+    cv=5,
+    n_jobs=-1
+)
+grid_search.fit(X_train_scaled, y_train_balanced)
+
+best_knn = grid_search.best_estimator_
+print(f"✅ Mejor modelo: {grid_search.best_params_} con accuracy={grid_search.best_score_:.4f}")
+
+# =============================================
+# EVALUACIÓN DEL MODELO
+# =============================================
+print("\n📊 Evaluando modelo...")
+
+# Reporte de clasificación
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\n📝 Reporte de Clasificación:\n", classification_report(y_test, y_pred, target_names=class_names))
+
+# Matriz de confusión
+plt.figure(figsize=(8, 6))
+cm = confusion_matrix(y_test, y_pred)
+sns.heatmap(cm, annot=True, fmt="d", cmap="Greens", xticklabels=class_names, yticklabels=class_names)
+plt.title("Matriz de Confusión")
+plt.xlabel("Predicho")
+plt.ylabel("Real")
+plt.show()
+
+# 🔍 🔴 Visualización de errores de predicción
+import pandas as pd
+
+# DataFrame con predicciones y reales
+error_df = pd.DataFrame({
+    "Real": label_encoders["Grade"].inverse_transform(y_test),
+    "Predicho": label_encoders["Grade"].inverse_transform(y_pred)
+})
+error_df["Correcto"] = error_df["Real"] == error_df["Predicho"]
+
+# Gráfico de errores por clase real
+error_counts = error_df[~error_df["Correcto"]].groupby("Real").size().sort_values(ascending=False)
+
+plt.figure(figsize=(10, 5))
+sns.barplot(x=error_counts.index, y=error_counts.values, palette="Reds_r")
+plt.title("Errores de Clasificación por Clase Real")
+plt.ylabel("Cantidad de Errores")
+plt.xlabel("Clase Real")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Heatmap de Real vs Predicho
+error_matrix = pd.crosstab(error_df["Real"], error_df["Predicho"])
+plt.figure(figsize=(8, 6))
+sns.heatmap(error_matrix, annot=True, fmt="d", cmap="YlGnBu")
+plt.title("Errores de Clasificación (Real vs Predicho)")
+plt.xlabel("Predicho")
+plt.ylabel("Real")
+plt.xticks(rotation=45)
+plt.yticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+# =============================================
+# EVALUACIÓN ADICIONAL POR MÉTRICA DE DISTANCIA
+# =============================================
+print("\n📐 Evaluación de diferentes métricas y valores de k...")
+k_values = range(1, 21, 2)
+distance_metrics = ['euclidean', 'manhattan', 'cosine']
+cv_scores = {}
+
+for metric in distance_metrics:
+    print(f"\n🔸 Métrica: {metric}")
+    scores_list = []
+    for k in tqdm(k_values, desc=f"k={metric}"):
+        knn_model = KNeighborsClassifier(n_neighbors=k, metric=metric)
+        scores = cross_val_score(knn_model, X_train_scaled, y_train_balanced, cv=5, scoring="accuracy")
+        scores_list.append(scores.mean())
+    cv_scores[metric] = scores_list
+    best_k = k_values[np.argmax(scores_list)]
+    print(f"✅ Mejor k: {best_k} con accuracy={max(scores_list):.4f}")
+
+# Visualización comparativa
+plt.figure(figsize=(10, 6))
+for metric in cv_scores:
+    plt.plot(k_values, cv_scores[metric], marker='o', label=f"{metric}")
+plt.title("Comparación de Accuracy por k y Métrica de Distancia")
+plt.xlabel("Valor de k")
+plt.ylabel("Accuracy")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+print("\n✅ Análisis completado con éxito.")
+
+RESULTADO
+
+![image](https://github.com/user-attachments/assets/dd4f561e-e464-4e2b-b23e-25d61e427714)
+
+![image](https://github.com/user-attachments/assets/9123c8c4-3811-4158-9e02-a94f3d6b750b)
+
+![image](https://github.com/user-attachments/assets/7a71c133-6eff-4a87-b9a8-f5f1c08e8487)
+
+![image](https://github.com/user-attachments/assets/c9295128-2a18-41cc-b50a-dbaf0e778f8c)
+
