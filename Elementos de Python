@@ -1,5 +1,5 @@
 Numpy (biblioteca de anális de datos)
-# los vectores y matrices permiten el anális de datos de manera organizada, 
+# los vectores y matrices permiten el análisis de datos de manera organizada, 
 por lo que son eficientes para trabajar los datos númericos y científicos; 
 además, es simple de trabajar ya que consiste en un puntero a la memoria, 
 utilizados para interpretar datos almacenados tales como "Tipo dato" y los "saltos"
