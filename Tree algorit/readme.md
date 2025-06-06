@@ -1,4 +1,4 @@
-# Instalación de dependencias
+# Instalación de dependencias,
 !apt-get install -qq graphviz
 !pip install graphviz
 
