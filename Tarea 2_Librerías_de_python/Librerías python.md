@@ -1,5 +1,6 @@
-1. Numpy (biblioteca de anális de datos)
-  # los vectores y matrices permiten el análisis de datos de manera organizada, 
+# Tarea 2: exponga tres librerías de python que le hayan llamado la atención
+# 1. Numpy (biblioteca de anális de datos)
+  los vectores y matrices permiten el análisis de datos de manera organizada, 
   por lo que son eficientes para trabajar los datos númericos y científicos; 
   además, es simple de trabajar ya que consiste en un puntero a la memoria, 
   utilizados para interpretar datos almacenados tales como "Tipo dato" y los "saltos"
@@ -7,7 +8,7 @@
   En la Fig. 1: The NumPy array incorporates several fundamental array concepts.
 
 
-2. Pandas y Polars (juntas son bibliotecas de python que permiten analizar grandes conjuntos de datos estructurados en filas y columnas)
+# 2. Pandas y Polars (juntas son bibliotecas de python que permiten analizar grandes conjuntos de datos estructurados en filas y columnas)
   Permiten filtar datos, agrupar por columnas, realizar operaciones como sumas y conteos entre otros.
   Permite unir, fusionar y combinar DataFrames.
   Pandas es más antiguó pero es reconocido entre la comunudad de las personas que trabajan con python, 
@@ -23,7 +24,7 @@
   Pandas es una opción popular que ya ha sido utilizada y garantiza datos confiables.
 
 
-3. Matplotlip y hvPlot (bibliotecas de python que proporcionan diseño gráfico)
+# 3. Matplotlip y hvPlot (bibliotecas de python que proporcionan diseño gráfico)
   Matplotlip permite visualización en 2D aunque requiere más código para los detalles de las magenes.
   hvPlot permite la creación de gráficos en 3D, utilizando hv.Scatter3D para gráficos de dispersión y hv.Surface para gráficos de superficie.
   En terminos generales sus características son:
