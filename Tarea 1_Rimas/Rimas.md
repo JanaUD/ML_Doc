@@ -5,58 +5,38 @@ Código para encontrar palabras con letras establecidas.
 APLICACIÓN PARA ENCONTRAR PALABRAS DESEADAS BUSCANDOLAS DESDE UN ARCHIVO.
 
 Primer paso_Intalación de librerias
-
   !pip install --upgrade pymupdf
   import re
   import os
-  from google.colab import files
   import fitz
-
-Segundo paso_Función para subir PDFs
-
-  def subir_pdf():
-      """Función para subir archivos PDF a Colab"""
-      print("Por favor, sube tu archivo PDF")
-      uploaded = files.upload()
-      if not uploaded:
-          print("❌ No se subió ningún archivo")
-          return None
-      for filename in uploaded.keys():
-          print(f"✅ Archivo subido: {filename}")
-          return filename
-      return None
-
-
+Segundo paso_Función para llamar el archivo desde colab
+  ARCHIVO_PDF = "/content/redie,+contenido-varelaetal.pdf"
 Tercer paso_Función para extraer tecto del pdf
-
   def extraer_texto_pdf(pdf_path):
-      """Extrae texto de un archivo PDF"""
       try:
-          doc = fitz.open(pdf_path)
-          texto_completo = ""
+          doc = fitz.open(pdf_path)       # Abre el archivo PDF
+          texto_completo = ""             # Variable para acumular el texto
+          # Muestra metadatos del PDF
           print(f"\n📄 Información del PDF:")
           print(f"- Páginas: {doc.page_count}")
           print(f"- Tamaño: {round(os.path.getsize(pdf_path)/1024, 2)} KB")
-          
+          # Extrae texto de cada página
           for page_num in range(doc.page_count):
-              page = doc.load_page(page_num)
-              texto_completo += page.get_text("text")
-          
-          return texto_completo
-      except Exception as e:
+              page = doc.load_page(page_num)          # Carga la página
+              texto_completo += page.get_text("text") # Extrae texto
+          return texto_completo  # Retorna todo el texto concatenado
+       
+      except Exception as e:     # Manejo de errores
           print(f"❌ Error al procesar PDF: {e}")
           return None
 
 Cuarto paso_Función para buscar terminaciones
 
   def buscar_terminaciones(texto, terminacion="ca"):
-      """Busca palabras con terminación específica usando regex"""
-      patron = re.compile(rf'\b\w*{terminacion}\b', re.IGNORECASE)
-      palabras = patron.findall(texto)
-      return sorted(list(set(palabras)))  # Elimina duplicados y ordena
+   palabras = re.findall(rf'\b\w*{terminacion}\b', texto, re.IGNORECASE)
+    return sorted(set(palabras))  # Elimina duplicados y ordena
 
 Quinto paso_Ejecución principal del código
-
   if __name__ == "__main__":
       print("=== PROCESADOR DE PDF ===")
       archivo_pdf = subir_pdf()
@@ -74,7 +54,7 @@ Quinto paso_Ejecución principal del código
                       print(f"{i}. {palabra}")
               else:
                   print("No se encontraron palabras con esa terminación")
-    
+    # Firma/fin del programa
     print("\nJannet Ortiz Aguilar")
 
 
