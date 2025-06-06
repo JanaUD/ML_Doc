@@ -4,12 +4,12 @@ Código para encontrar palabras con letras establecidas.
 
 APLICACIÓN PARA ENCONTRAR PALABRAS DESEADAS BUSCANDOLAS DESDE UN ARCHIVO.
 
-Primer paso_Intalación de librerias
+# Primer paso_Intalación de librerias
   !pip install --upgrade pymupdf
   import re
   import os
   import fitz
-Segundo paso_Función para llamar el archivo desde colab
+# Segundo paso_Función para llamar el archivo desde colab
   ARCHIVO_PDF = "/content/redie,+contenido-varelaetal.pdf"
 Tercer paso_Función para extraer tecto del pdf
   def extraer_texto_pdf(pdf_path):
@@ -30,21 +30,18 @@ Tercer paso_Función para extraer tecto del pdf
           print(f"❌ Error al procesar PDF: {e}")
           return None
 
-Cuarto paso_Función para buscar terminaciones
-
+# Tercer paso_Función para buscar terminaciones
   def buscar_terminaciones(texto, terminacion="ca"):
    palabras = re.findall(rf'\b\w*{terminacion}\b', texto, re.IGNORECASE)
     return sorted(set(palabras))  # Elimina duplicados y ordena
 
-Quinto paso_Ejecución principal del código
+# Cuarto paso_Ejecución principal del código
   if __name__ == "__main__":
       print("=== PROCESADOR DE PDF ===")
       archivo_pdf = subir_pdf()
-      
       if archivo_pdf:
           texto_extraido = extraer_texto_pdf(archivo_pdf)
-          
-          if texto_extraido:
+              if texto_extraido:
               terminacion = input("\n🔍 Ingrese terminación a buscar (ej: 'ca'): ").strip()
               palabras_encontradas = buscar_terminaciones(texto_extraido, terminacion)
               
@@ -56,7 +53,6 @@ Quinto paso_Ejecución principal del código
                   print("No se encontraron palabras con esa terminación")
     # Firma/fin del programa
     print("\nJannet Ortiz Aguilar")
-
 
 RESULTADOS #ejemplo de ejecución con la terminación "os"
 
