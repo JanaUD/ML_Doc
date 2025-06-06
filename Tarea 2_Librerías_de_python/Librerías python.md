@@ -1,6 +1,6 @@
 # Tarea 2: exponga tres librerías de python que le hayan llamado la atención
 # 1. Numpy (biblioteca de anális de datos)
-  los vectores y matrices permiten el análisis de datos de manera organizada, 
+  Permite el análisis de datos de manera organizada en vectores y matrices, 
   por lo que son eficientes para trabajar los datos númericos y científicos; 
   además, es simple de trabajar ya que consiste en un puntero a la memoria, 
   utilizados para interpretar datos almacenados tales como "Tipo dato" y los "saltos"
@@ -9,9 +9,9 @@
 
 
 # 2. Pandas y Polars (juntas son bibliotecas de python que permiten analizar grandes conjuntos de datos estructurados en filas y columnas)
-  Permiten filtar datos, agrupar por columnas, realizar operaciones como sumas y conteos entre otros.
+  Las bibliotecas permiten filtar datos, agrupar por columnas, realizar operaciones como sumas y conteos entre otros.
   Permite unir, fusionar y combinar DataFrames.
-  Pandas es más antiguó pero es reconocido entre la comunudad de las personas que trabajan con python, 
+  Aún que Pandas es más antiguó es reconocido entre la comunudad de las personas que trabajan con python, 
   pero hace más uso de memoria cuando trabaja con grandes volumenes de datos;
   a diferencia de Polars, que es más reciente, esc onocido por ser más eficiente tn el uso de la memoria para procesamiento de datos.
   En terminos generales sus características son:
