@@ -1,4 +1,4 @@
-# Instalación de dependencias,
+# Instalación de dependencias
 !apt-get install -qq graphviz
 !pip install graphviz
 
@@ -209,4 +209,5 @@ for i, pred in enumerate(predictions):
     print(f"Instancia {i+1}: Predicción = {pred}")
 
   ![image](https://github.com/user-attachments/assets/4a7595f6-e20e-4560-bab3-474279244eb6)
+ 
 
