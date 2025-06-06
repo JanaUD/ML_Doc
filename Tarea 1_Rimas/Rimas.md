@@ -1,0 +1,640 @@
+Tarea 1_Rimas
+
+Código para encontrar palabras con letras establecidas.
+
+APLICACIÓN PARA ENCONTRAR PALABRAS DESEADAS BUSCANDOLAS DESDE UN ARCHIVO.
+
+Primer paso_Intalación de librerias
+
+  !pip install --upgrade pymupdf
+  import re
+  import os
+  from google.colab import files
+  import fitz
+
+Segundo paso_Función para subir PDFs
+
+  def subir_pdf():
+      """Función para subir archivos PDF a Colab"""
+      print("Por favor, sube tu archivo PDF")
+      uploaded = files.upload()
+      if not uploaded:
+          print("❌ No se subió ningún archivo")
+          return None
+      for filename in uploaded.keys():
+          print(f"✅ Archivo subido: {filename}")
+          return filename
+      return None
+
+
+Tercer paso_Función para extraer tecto del pdf
+
+  def extraer_texto_pdf(pdf_path):
+      """Extrae texto de un archivo PDF"""
+      try:
+          doc = fitz.open(pdf_path)
+          texto_completo = ""
+          print(f"\n📄 Información del PDF:")
+          print(f"- Páginas: {doc.page_count}")
+          print(f"- Tamaño: {round(os.path.getsize(pdf_path)/1024, 2)} KB")
+          
+          for page_num in range(doc.page_count):
+              page = doc.load_page(page_num)
+              texto_completo += page.get_text("text")
+          
+          return texto_completo
+      except Exception as e:
+          print(f"❌ Error al procesar PDF: {e}")
+          return None
+
+Cuarto paso_Función para buscar terminaciones
+
+  def buscar_terminaciones(texto, terminacion="ca"):
+      """Busca palabras con terminación específica usando regex"""
+      patron = re.compile(rf'\b\w*{terminacion}\b', re.IGNORECASE)
+      palabras = patron.findall(texto)
+      return sorted(list(set(palabras)))  # Elimina duplicados y ordena
+
+Quinto paso_Ejecución principal del código
+
+  if __name__ == "__main__":
+      print("=== PROCESADOR DE PDF ===")
+      archivo_pdf = subir_pdf()
+      
+      if archivo_pdf:
+          texto_extraido = extraer_texto_pdf(archivo_pdf)
+          
+          if texto_extraido:
+              terminacion = input("\n🔍 Ingrese terminación a buscar (ej: 'ca'): ").strip()
+              palabras_encontradas = buscar_terminaciones(texto_extraido, terminacion)
+              
+              if palabras_encontradas:
+                  print(f"\n🔎 {len(palabras_encontradas)} palabras terminadas en '{terminacion}':")
+                  for i, palabra in enumerate(palabras_encontradas, 1):
+                      print(f"{i}. {palabra}")
+              else:
+                  print("No se encontraron palabras con esa terminación")
+    
+    print("\nJannet Ortiz Aguilar")
+
+
+RESULTADOS #ejemplo de ejecución con la terminación "os"
+
+Archivo PDF descargado correctamente.
+Requirement already satisfied: pymupdf in /usr/local/lib/python3.11/dist-packages (1.26.0)
+=== PROCESADOR DE PDF ===
+Por favor, sube tu archivo PDF
+redie,+contenido-varelaetal.pdf
+redie,+contenido-varelaetal.pdf(application/pdf) - 634154 bytes, last modified: 24/3/2025 - 100% done
+Saving redie,+contenido-varelaetal.pdf to redie,+contenido-varelaetal (2).pdf
+✅ Archivo subido: redie,+contenido-varelaetal (2).pdf
+
+📄 Información del PDF:
+- Páginas: 33
+- Tamaño: 619.29 KB
+
+🔍 Ingrese terminación a buscar (ej: 'ca'): os
+
+🔎 541 palabras terminadas en 'os':
+1. ABUELOS
+2. ACONTECIMIENTOS
+3. ACTOS
+4. ACUERDOS
+5. ADECUADOS
+6. ADELANTOS
+7. ADJETIVOS
+8. ADORNOS
+9. ADULTOS
+10. AFRICANOS
+11. ALGUNOS
+12. ALIADOS
+13. ALIMENTOS
+14. ALTOS
+15. ALUMNOS
+16. AMBOS
+17. AMERICANOS
+18. AMIGOS
+19. ANCIANOS
+20. ANFIBIOS
+21. ANTEPASADOS
+22. ANTIGUOS
+23. ANUNCIOS
+24. ANÓTALOS
+25. APARATOS
+26. APRENDAMOS
+27. AQUELLOS
+28. ARBUSTOS
+29. ARGUMENTOS
+30. ARQUEÓLOGOS
+31. ARTESANOS
+32. ARTÍCULOS
+33. ASPECTOS
+34. ASTROS
+35. ASUNTOS
+36. AÑOS
+37. BAJOS
+38. BANCOS
+39. BARCOS
+40. BENEFICIOS
+41. BLANCOS
+42. BOLAÑOS
+43. BOLETOS
+44. BOMBEROS
+45. BRAZOS
+46. BUENOS
+47. BÁSICOS
+48. CABALLOS
+49. CALENDARIOS
+50. CAMBIOS
+51. CAMINOS
+52. CAMPESINOS
+53. CAMPOS
+54. CARLOS
+55. CARTONCITOS
+56. CASOS
+57. CATÓLICOS
+58. CENTAVOS
+59. CENTROS
+60. CENTÉSIMOS
+61. CENTÍMETROS
+62. CERCANOS
+63. CHICLOSOS
+64. CHICOS
+65. CHINOS
+66. CICLOS
+67. CIENTOS
+68. CIENTÍFICOS
+69. CIERTOS
+70. CIUDADANOS
+71. CLAVOS
+72. COCHINITOS
+73. COCODRILOS
+74. COMENTARIOS
+75. COMPAÑEROS
+76. COMPLEJOS
+77. COMPLETOS
+78. COMPLICADOS
+79. CONCEPTOS
+80. CONEJOS
+81. CONFLICTOS
+82. CONOCEMOS
+83. CONOCIDOS
+84. CONOCIMIENTOS
+85. CONSEJOS
+86. CONTENTOS
+87. CORTOS
+88. CRIOLLOS
+89. CRISTIANOS
+90. CUADERNOS
+91. CUADRADOS
+92. CUADRILÁTEROS
+93. CUADRITOS
+94. CUADROS
+95. CUANTOS
+96. CUBIERTOS
+97. CUBOS
+98. CUENTOS
+99. CUERPOS
+100. CUIDADOS
+101. CUIDEMOS
+102. CULTIVOS
+103. CUMPLEAÑOS
+104. CUYOS
+105. CUÁNTOS
+106. CÁLCULOS
+107. CÍRCULOS
+108. DADOS
+109. DAMNIFICADOS
+110. DAMOS
+111. DATOS
+112. DAÑOS
+113. DEBEMOS
+114. DECIMOS
+115. DEDOS
+116. DEPÓSITOS
+117. DERECHOS
+118. DERIVADOS
+119. DESCUBRIMIENTOS
+120. DESECHAMOS
+121. DESECHOS
+122. DESEOS
+123. DESIERTOS
+124. DIARIOS
+125. DIBUJADOS
+126. DIBUJOS
+127. DINOSAURIOS
+128. DIOS
+129. DISEÑOS
+130. DISTINTOS
+131. DIVERSOS
+132. DIÁLOGOS
+133. DOCUMENTOS
+134. DOMINIOS
+135. DOS
+136. DUEÑOS
+137. DUROS
+138. DÉCIMOS
+139. ECONÓMICOS
+140. EDIFICIOS
+141. EFECTOS
+142. EGIPCIOS
+143. EJEMPLOS
+144. EJERCICIOS
+145. EJÉRCITOS
+146. ELABORADOS
+147. ELEMENTOS
+148. ELLOS
+149. ELÉCTRICOS
+150. ENCONTRADOS
+151. ENCONTRAMOS
+152. ENEMIGOS
+153. ENERGÉTICOS
+154. EQUIPOS
+155. ESCLAVOS
+156. ESCRITOS
+157. ESCRÍBELOS
+158. ESFUERZOS
+159. ESOS
+160. ESPACIOS
+161. ESTADOS
+162. ESTAMOS
+163. ESTOS
+164. ESTUDIOS
+165. EUROPEOS
+166. EXPERIMENTOS
+167. EXTRANJEROS
+168. EXTREMOS
+169. Estratos
+170. Estudios
+171. FANTÁSTICOS
+172. FENÓMENOS
+173. FORMADOS
+174. FOTOS
+175. FRAGMENTOS
+176. FRASCOS
+177. FRUTOS
+178. FRÍOS
+179. FUIMOS
+180. FUNCIONARIOS
+181. FÍSICOS
+182. GATOS
+183. GEMELOS
+184. GLOBOS
+185. GOBIERNOS
+186. GRADOS
+187. GRAMOS
+188. GRANOS
+189. GRIEGOS
+190. GRITOS
+191. GRUPOS
+192. GUERREROS
+193. GUSANOS
+194. GUSTOS
+195. HABLEMOS
+196. HACEMOS
+197. HAGAMOS
+198. HALLAZGOS
+199. HAREMOS
+200. HECHOS
+201. HELADOS
+202. HEMOS
+203. HERMANOS
+204. HIELOS
+205. HIJOS
+206. HILOS
+207. HUESOS
+208. HUEVOS
+209. HUMANOS
+210. HÁBITOS
+211. IMPUESTOS
+212. INCENDIOS
+213. INDIOS
+214. INDIVIDUOS
+215. INSECTOS
+216. INSTRUMENTOS
+217. INVENTOS
+218. INVERTEBRADOS
+219. JUEGOS
+220. JUGUEMOS
+221. JUNTOS
+222. KILOGRAMOS
+223. KILOS
+224. LADOS
+225. LADRILLOS
+226. LAGOS
+227. LARGOS
+228. LEJANOS
+229. LEJOS
+230. LIBROS
+231. LIMPIOS
+232. LITROS
+233. LLAMADOS
+234. LLAMAMOS
+235. LLEGAMOS
+236. LLENOS
+237. LOS
+238. Larios
+239. Los
+240. LÍQUIDOS
+241. MACHOS
+242. MAESTROS
+243. MALOS
+244. MAMÍFEROS
+245. MANGOS
+246. MANOS
+247. MARCADOS
+248. MARINEROS
+249. MARINOS
+250. MEDIADOS
+251. MEDIOS
+252. MENOS
+253. MERCADOS
+254. MERIDIANOS
+255. MESOAMERICANOS
+256. MESTIZOS
+257. METROS
+258. MEXICANOS
+259. MICROBIOS
+260. MICROORGANISMOS
+261. MIEMBROS
+262. MILILITROS
+263. MILÍMETROS
+264. MINEROS
+265. MINUTOS
+266. MISMOS
+267. MODELOS
+268. MODOS
+269. MOLINOS
+270. MOMENTOS
+271. MONOS
+272. MORELOS
+273. MOSAICOS
+274. MOTIVOS
+275. MOVIMIENTOS
+276. MOÑOS
+277. MUCHACHOS
+278. MUCHOS
+279. MUCHÍSIMOS
+280. MUERTOS
+281. MUNICIPIOS
+282. MUROS
+283. MUSEOS
+284. MUÑECOS
+285. MÉDICOS
+286. MÉTODOS
+287. MÚSCULOS
+288. NACIMIENTOS
+289. NECESARIOS
+290. NECESITAMOS
+291. NEGROS
+292. NIDOS
+293. NIÑOS
+294. NOS
+295. NOSOTROS
+296. NUESTROS
+297. NUEVOS
+298. NUMEROSOS
+299. NÚMEROS
+300. OBJETOS
+301. OBREROS
+302. OCÉANOS
+303. OFICIOS
+304. OJOS
+305. ORGANISMOS
+306. OSOS
+307. OTROS
+308. OVARIOS
+309. OVÍPAROS
+310. Otros
+311. PALACIOS
+312. PALOS
+313. PAPELITOS
+314. PARALELOS
+315. PARECIDOS
+316. PARTIDOS
+317. PASAJEROS
+318. PASOS
+319. PASTOS
+320. PATOS
+321. PEDAZOS
+322. PELIGROS
+323. PENSAMIENTOS
+324. PEQUEÑOS
+325. PERIODOS
+326. PERIÓDICOS
+327. PERROS
+328. PESADOS
+329. PESOS
+330. PINOS
+331. PLANOS
+332. PLATILLOS
+333. PLÁSTICOS
+334. POBLADOS
+335. POCOS
+336. PODEMOS
+337. PODEROSOS
+338. POLIEDROS
+339. POLLOS
+340. POLOS
+341. POLÍGONOS
+342. POLÍTICOS
+343. PRECIOS
+344. PRIMEROS
+345. PRIMOS
+346. PRINCIPIOS
+347. PRIVILEGIOS
+348. PROCEDIMIENTOS
+349. PROCESOS
+350. PRODUCTOS
+351. PROPIOS
+352. PUEBLOS
+353. PUERTOS
+354. PUESTOS
+355. PUNTOS
+356. PÁJAROS
+357. PÁRRAFOS
+358. PÚBLICOS
+359. QUEREMOS
+360. QUESITOS
+361. QUESOS
+362. QUÍMICOS
+363. RASGOS
+364. RAYOS
+365. RECTOS
+366. RECTÁNGULOS
+367. RECUADROS
+368. RECUERDOS
+369. RECURSOS
+370. REFRESCOS
+371. REINOS
+372. RELACIONADOS
+373. RELATOS
+374. RELIGIOSOS
+375. REPARTOS
+376. RESTOS
+377. RESULTADOS
+378. REVOLUCIONARIOS
+379. RICOS
+380. RIESGOS
+381. ROJOS
+382. ROMANOS
+383. Resultados
+384. RÁPIDOS
+385. RÍOS
+386. Ríos
+387. SABEMOS
+388. SALTOS
+389. SAPOS
+390. SECOS
+391. SECRETOS
+392. SEGMENTOS
+393. SEGUNDOS
+394. SENCILLOS
+395. SENTIDOS
+396. SENTIMIENTOS
+397. SEPARADOS
+398. SERVICIOS
+399. SEÑORÍOS
+400. SIGLOS
+401. SIGNIFICADOS
+402. SIGNOS
+403. SITIOS
+404. SOLDADOS
+405. SOMOS
+406. SONIDOS
+407. SUBMARINOS
+408. SUCESOS
+409. SUEÑOS
+410. SÍMBOLOS
+411. SÓLIDOS
+412. TACOS
+413. TALLOS
+414. TAMAÑOS
+415. TANTOS
+416. TECHOS
+417. TEJIDOS
+418. TEMPLADOS
+419. TEMPLOS
+420. TENEMOS
+421. TERREMOTOS
+422. TERRENOS
+423. TERRITORIOS
+424. TESOROS
+425. TESTIMONIOS
+426. TESTÍCULOS
+427. TEXTOS
+428. TIEMPOS
+429. TIPOS
+430. TODOS
+431. TOS
+432. TRABAJEMOS
+433. TRABAJOS
+434. TRAPECIOS
+435. TRATOS
+436. TRIBUTOS
+437. TRIÁNGULOS
+438. TRONCOS
+439. TROZOS
+440. TRUENOS
+441. TURNOS
+442. Textos
+443. TÉCNICOS
+444. TÍOS
+445. TÍTULOS
+446. UNIDOS
+447. UNOS
+448. USAMOS
+449. USOS
+450. UTILIZADOS
+451. UTILIZAMOS
+452. VAMOS
+453. VARIOS
+454. VASCONCELOS
+455. VASOS
+456. VECINOS
+457. VEHÍCULOS
+458. VEMOS
+459. VERBOS
+460. VERSOS
+461. VERTEBRADOS
+462. VESTIDOS
+463. VIAJEROS
+464. VIEJOS
+465. VIENTOS
+466. VIMOS
+467. VIVIMOS
+468. VIVOS
+469. VOTOS
+470. YACIMIENTOS
+471. ZAPATOS
+472. adjetivos
+473. algunos
+474. alumnos
+475. ambos
+476. analizados
+477. arbitrarios
+478. archivos
+479. artículos
+480. arábigos
+481. asociados
+482. aspectos
+483. años
+484. básicos
+485. campos
+486. consideramos
+487. conteos
+488. criterios
+489. cálculos
+490. datos
+491. diccionarios
+492. didácticos
+493. digitalizados
+494. distintos
+495. diversos
+496. dos
+497. ejercicios
+498. electrónicos
+499. elegidos
+500. elementos
+501. emprendimos
+502. estos
+503. estratos
+504. estudios
+505. hablaremos
+506. ilustrativos
+507. interesados
+508. libros
+509. listados
+510. los
+511. menos
+512. mexicanos
+513. muchos
+514. necesarios
+515. niños
+516. numéricos
+517. números
+518. objetos
+519. otros
+520. própositos
+521. puntos
+522. párrafos
+523. realizados
+524. recomendamos
+525. resultados
+526. romanos
+527. sexos
+528. sistemáticos
+529. sustantivos
+530. textos
+531. todos
+532. trabajos
+533. varios
+534. verbos
+535. vocablos
+536. ÁNGULOS
+537. ÉSTOS
+538. ÍBAMOS
+539. ÓRGANOS
+540. ÓVULOS
+541. ÚLTIMOS
+
