@@ -208,7 +208,7 @@ try:
     # Gráfico comparativo: masa inicial vs masa final por planta
     plt.figure(figsize=(10, 6))
     plt.plot(df_viz['id_planta'], df_viz['masa_inicial'], marker='o', label='Masa seca inicial')
-    plt.plot(df_viz['id_planta'], df_viz['masa_final'], marker='o', label='Masa seca final')
+    plt.plot(df_viz['id_planta'], df_viz['masa_final'], marker='o', label='Masa seca final') 
     plt.title("Comparación de masa seca por planta")
     plt.xlabel("ID de Planta")
     plt.ylabel("Masa seca (g)")
