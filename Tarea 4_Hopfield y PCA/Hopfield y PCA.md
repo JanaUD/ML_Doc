@@ -118,6 +118,7 @@ coordenadas = {
 
 # RESULTADOS
 
+![image](https://github.com/user-attachments/assets/797c038e-764f-4879-a1da-dba6bcbb5da1)
 
 
 # Código para utilización PCA que permite visualizar gráficas en 2D una base de datos de MNIST
