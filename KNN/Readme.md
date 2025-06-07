@@ -2,7 +2,7 @@
 1) División de datos (train_test_split) para entrenamiento y prueba.
 2) Normalización (StandardScaler) para estandarizar las variables.
 3) Evaluación iterativa de múltiples valores de *k* (1 a 20).
-4) Cálculo del RMSE para medir el error en cada iteración.
+4) Cálculo del RMSE para medir el error en cada iteración. 
 5) Selección automática del *k* con menor error (np.argmin).
 Estos componentes, respaldados por visualizaciones claras, aseguran un equilibrio entre precisión y generalización, evitando sobreajuste (*k* bajo) o subajuste (*k* alto). El proceso es reproducible y sistemático."""
 
