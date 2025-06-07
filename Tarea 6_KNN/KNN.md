@@ -61,21 +61,21 @@ def load_data():
             raise ValueError("Opción no válida")
         
         df = pl.read_csv(path)
-        print(f"\n✅ Datos cargados exitosamente desde: {path}")
-        print(f"📊 Dimensiones: {df.shape[0]} filas x {df.shape[1]} columnas")
+        print(f"\n Datos cargados exitosamente desde: {path}")
+        print(f" Dimensiones: {df.shape[0]} filas x {df.shape[1]} columnas")
         return df
         
     except Exception as e:
-        print(f"\n❌ Error al cargar datos: {str(e)}")
+        print(f"\n Error al cargar datos: {str(e)}")
         raise
 
 # 5. Carga de datos
 try:
     df = load_data()
-    print("\n🔍 Muestra de datos (5 primeras filas):")
+    print("\n Muestra de datos (5 primeras filas):")
     print(df.head())
 except Exception as e:
-    print(f"\n⚠️ No se pudo cargar el archivo. Error: {e}")
+    print(f"\n No se pudo cargar el archivo. Error: {e}")
     raise
 
 # 6. Análisis Exploratorio Inicial
@@ -103,7 +103,7 @@ def select_target(df):
         raise ValueError("No se encontraron columnas numéricas")
     
     # Visualización de distribuciones
-    print("\n📊 Distribuciones de variables numéricas:")
+    print("\n Distribuciones de variables numéricas:")
     plt.figure(figsize=(15, 10))
     for i, col in enumerate(numeric_cols, 1):
         plt.subplot((len(numeric_cols)//3)+1, 3, i)
@@ -113,7 +113,7 @@ def select_target(df):
     plt.show()
     
     # Selección interactiva
-    print("\n🔢 Seleccione la columna objetivo:")
+    print("\n Seleccione la columna objetivo:")
     for i, col in enumerate(numeric_cols, 1):
         print(f"{i}. {col}")
     
@@ -124,17 +124,17 @@ def select_target(df):
                 selected_col = numeric_cols[choice-1]
                 
                 if df[selected_col].dtype in (pl.Int32, pl.Int64):
-                    print(f"⚠️ Convirtiendo '{selected_col}' a float...")
+                    print(f" Convirtiendo '{selected_col}' a float...")
                     df = df.with_columns(pl.col(selected_col).cast(pl.Float64))
                 
                 return df, selected_col
-            print("❌ Número fuera de rango. Intente nuevamente.")
+            print(" Número fuera de rango. Intente nuevamente.")
         except ValueError:
-            print("❌ Ingrese un número válido.")
+            print(" Ingrese un número válido.")
 
 try:
     df, TARGET_COL = select_target(df)
-    print(f"\n🎯 Columna objetivo seleccionada: '{TARGET_COL}'")
+    print(f"\n Columna objetivo seleccionada: '{TARGET_COL}'")
     
     # Visualización de la variable objetivo
     plt.figure(figsize=(12, 5))
@@ -149,7 +149,7 @@ try:
     plt.show()
     
 except Exception as e:
-    print(f"\n❌ Error en selección de variable objetivo: {e}")
+    print(f"\n Error en selección de variable objetivo: {e}")
     raise
 
 # 7. Ingeniería de Características
@@ -163,7 +163,7 @@ df = df.drop([col for col in irrelevant_cols if col in df.columns])
 
 # 7.2 Procesamiento de variables categóricas
 categorical_cols = [col for col in df.columns if df[col].dtype == pl.Utf8 and col != TARGET_COL]
-print(f"🧠 Variables categóricas a transformar: {categorical_cols}")
+print(f" Variables categóricas a transformar: {categorical_cols}")
 
 if categorical_cols:
     # Guardar nombres originales para referencia
@@ -176,8 +176,8 @@ if categorical_cols:
     dummy_cols = [col for col in df.columns 
                  if any(col.startswith(cat_col) for cat_col in original_categorical_cols)]
     
-    print(f"\n📐 Nuevas columnas tras one-hot encoding: {df.shape[1]}")
-    print("\n🔍 Muestra de columnas transformadas:")
+    print(f"\n Nuevas columnas tras one-hot encoding: {df.shape[1]}")
+    print("\n Muestra de columnas transformadas:")
     
     # Mostrar solo algunas columnas dummy como ejemplo (máximo 5)
     sample_dummy_cols = dummy_cols[:min(5, len(dummy_cols))]
@@ -201,7 +201,7 @@ numeric_cols = get_numeric_cols(df)
 if not numeric_cols:
     raise ValueError("No se encontraron columnas numéricas para análisis")
 
-print(f"🔢 Columnas numéricas para análisis: {numeric_cols}")
+print(f" Columnas numéricas para análisis: {numeric_cols}")
 
 # 8.2 Matriz de Correlación (con tamaño de letra ajustado)
 print("\n📊 Matriz de Correlación:")
@@ -236,7 +236,7 @@ plt.tight_layout()
 plt.show()
 
 # 8.3 Análisis de Varianza
-print("\n📈 Análisis de Varianza:")
+print("\n Análisis de Varianza:")
 variance_df = df.select([pl.col(col).var().alias(col) for col in numeric_cols])
 
 plt.figure(figsize=(12, 6))
@@ -272,13 +272,13 @@ y_pd = pd.Series(y)
 y_binned = pd.cut(y_pd, bins=3, labels=['Low', 'Medium', 'High'])
 class_distribution = y_binned.value_counts(normalize=True)
 
-print("\n📊 Distribución de clases (discretizadas):")
+print("\n Distribución de clases (discretizadas):")
 print(class_distribution)
 
 # 9.1.1 Verificar desbalance significativo
 if class_distribution.max() > 0.7:  # Si una clase tiene más del 70%
-    print("\n⚠️ Advertencia: Distribución desbalanceada detectada")
-    print("🔧 Aplicando técnicas de balanceo...")
+    print("\n Advertencia: Distribución desbalanceada detectada")
+    print(" Aplicando técnicas de balanceo...")
     
     # Convertir a DataFrame para balanceo
     df_pd = df.select(numeric_cols + [TARGET_COL]).to_pandas()
@@ -305,14 +305,14 @@ if class_distribution.max() > 0.7:  # Si una clase tiene más del 70%
     df_balanced = pd.concat([df_majority_downsampled] + df_minorities_upsampled)
     
     # Ver nueva distribución
-    print("\n📊 Nueva distribución después del balanceo:")
+    print("\n Nueva distribución después del balanceo:")
     print(df_balanced.target_binned.value_counts(normalize=True))
     
     # Preparar datos balanceados
     X = df_balanced[numeric_cols].values
     y = df_balanced[TARGET_COL].values
 else:
-    print("\n✅ Los datos están balanceados, procediendo sin ajustes")
+    print("\n Los datos están balanceados, procediendo sin ajustes")
 
 # Escalado
 scaler = StandardScaler()
@@ -323,7 +323,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     X_scaled, y, test_size=0.2, random_state=42)
 
 # 9.2 Búsqueda del mejor k
-print("\n🔍 Buscando el mejor valor de k...")
+print("\n Buscando el mejor valor de k...")
 k_range = range(1, 21)
 rmse_scores = []
 
@@ -346,10 +346,10 @@ plt.grid(True, linestyle='--', alpha=0.7)
 plt.show()
 
 best_k = k_range[np.argmin(rmse_scores)]
-print(f"\n✅ Mejor valor de k: {best_k} con RMSE = {min(rmse_scores):.4f}")
+print(f"\n Mejor valor de k: {best_k} con RMSE = {min(rmse_scores):.4f}")
 
 # 9.3 Modelo final (Versión Corregida)
-print("\n🏆 Entrenando modelo final con el mejor k...")
+print("\n Entrenando modelo final con el mejor k...")
 final_knn = KNeighborsRegressor(n_neighbors=best_k)
 final_knn.fit(X_train, y_train)
 final_preds = final_knn.predict(X_test)
@@ -358,7 +358,7 @@ final_preds = final_knn.predict(X_test)
 final_r2 = r2_score(y_test, final_preds)
 final_rmse = np.sqrt(mean_squared_error(y_test, final_preds))  # Calculamos RMSE manualmente
 
-print("\n📊 Resultados del modelo final:")
+print("\n Resultados del modelo final:")
 print(f"- R²: {final_r2:.4f}")
 print(f"- RMSE: {final_rmse:.4f}")
 
@@ -432,7 +432,7 @@ print("="*50)
 
 ![image](https://github.com/user-attachments/assets/c7359dac-6415-41d5-9eeb-c806fb6e883d)
 
-🔢 Columnas numéricas para análisis: ['Gender_Female', 'Gender_Male', 'Age', 'Department_Business', 'Department_CS', 'Department_Engineering', 'Department_Mathematics', 'Attendance (%)', 'Midterm_Score', 'Final_Score', 'Assignments_Avg', 'Quizzes_Avg', 'Participation_Score', 'Projects_Score', 'Total_Score', 'Grade_A', 'Grade_B', 'Grade_C', 'Grade_D', 'Grade_F', 'Extracurricular_Activities_No', 'Extracurricular_Activities_Yes', 'Internet_Access_at_Home_No', 'Internet_Access_at_Home_Yes', "Parent_Education_Level_Bachelor's", 'Parent_Education_Level_High School', "Parent_Education_Level_Master's", 'Parent_Education_Level_None', 'Parent_Education_Level_PhD', 'Family_Income_Level_High', 'Family_Income_Level_Low', 'Family_Income_Level_Medium', 'Stress_Level (1-10)', 'Sleep_Hours_per_Night']
+ Columnas numéricas para análisis: ['Gender_Female', 'Gender_Male', 'Age', 'Department_Business', 'Department_CS', 'Department_Engineering', 'Department_Mathematics', 'Attendance (%)', 'Midterm_Score', 'Final_Score', 'Assignments_Avg', 'Quizzes_Avg', 'Participation_Score', 'Projects_Score', 'Total_Score', 'Grade_A', 'Grade_B', 'Grade_C', 'Grade_D', 'Grade_F', 'Extracurricular_Activities_No', 'Extracurricular_Activities_Yes', 'Internet_Access_at_Home_No', 'Internet_Access_at_Home_Yes', "Parent_Education_Level_Bachelor's", 'Parent_Education_Level_High School', "Parent_Education_Level_Master's", 'Parent_Education_Level_None', 'Parent_Education_Level_PhD', 'Family_Income_Level_High', 'Family_Income_Level_Low', 'Family_Income_Level_Medium', 'Stress_Level (1-10)', 'Sleep_Hours_per_Night']
 
 ![image](https://github.com/user-attachments/assets/553f383f-7cad-416a-ad04-a4f8cae867d2)
 
@@ -506,7 +506,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # Balanceo con SMOTE
-print("🔹 Aplicando SMOTE...")
+print(" Aplicando SMOTE...")
 smote = SMOTE(random_state=42)
 X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
 
@@ -535,16 +535,16 @@ grid_search = GridSearchCV(
 grid_search.fit(X_train_scaled, y_train_balanced)
 
 best_knn = grid_search.best_estimator_
-print(f"✅ Mejor modelo: {grid_search.best_params_} con accuracy={grid_search.best_score_:.4f}")
+print(f" Mejor modelo: {grid_search.best_params_} con accuracy={grid_search.best_score_:.4f}")
 
 # =============================================
 # EVALUACIÓN DEL MODELO
 # =============================================
-print("\n📊 Evaluando modelo...")
+print("\n Evaluando modelo...")
 
 # Reporte de clasificación
 print("Accuracy:", accuracy_score(y_test, y_pred))
-print("\n📝 Reporte de Clasificación:\n", classification_report(y_test, y_pred, target_names=class_names))
+print("\n Reporte de Clasificación:\n", classification_report(y_test, y_pred, target_names=class_names))
 
 # Matriz de confusión
 plt.figure(figsize=(8, 6))
@@ -555,7 +555,7 @@ plt.xlabel("Predicho")
 plt.ylabel("Real")
 plt.show()
 
-# 🔍 🔴 Visualización de errores de predicción
+# Visualización de errores de predicción
 import pandas as pd
 
 # DataFrame con predicciones y reales
@@ -592,13 +592,13 @@ plt.show()
 # =============================================
 # EVALUACIÓN ADICIONAL POR MÉTRICA DE DISTANCIA
 # =============================================
-print("\n📐 Evaluación de diferentes métricas y valores de k...")
+print("\n Evaluación de diferentes métricas y valores de k...")
 k_values = range(1, 21, 2)
 distance_metrics = ['euclidean', 'manhattan', 'cosine']
 cv_scores = {}
 
 for metric in distance_metrics:
-    print(f"\n🔸 Métrica: {metric}")
+    print(f"\n Métrica: {metric}")
     scores_list = []
     for k in tqdm(k_values, desc=f"k={metric}"):
         knn_model = KNeighborsClassifier(n_neighbors=k, metric=metric)
@@ -606,7 +606,7 @@ for metric in distance_metrics:
         scores_list.append(scores.mean())
     cv_scores[metric] = scores_list
     best_k = k_values[np.argmax(scores_list)]
-    print(f"✅ Mejor k: {best_k} con accuracy={max(scores_list):.4f}")
+    print(f" Mejor k: {best_k} con accuracy={max(scores_list):.4f}")
 
 # Visualización comparativa
 plt.figure(figsize=(10, 6))
@@ -620,7 +620,7 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 
-print("\n✅ Análisis completado con éxito.")
+print("\n Análisis completado con éxito.")
 
 RESULTADO
 
