@@ -1,5 +1,5 @@
 # Corección de la presentación
-# Se propone trabajar una ecuación para hallar la Tasa de crecimiento (TAC) 
+# Se propone trabajar una ecuación para hallar la Tasa de crecimiento (TAC) del Zea Maíz Porva sometido a a compo electromagnético
 
 !pip install scikit-learn
 # Instalación (si usas Google Colab)
