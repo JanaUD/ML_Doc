@@ -465,7 +465,6 @@ import polars as pl
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
@@ -474,13 +473,23 @@ from imblearn.over_sampling import SMOTE
 from tqdm import tqdm
 
 # =============================================
+# CONFIGURACIÓN INICIAL
+# =============================================
+plt.style.use('ggplot')
+sns.set_palette("viridis")
+np.random.seed(42)
+
+# =============================================
 # CARGA Y PREPROCESAMIENTO DE DATOS
 # =============================================
-print("🔹 Cargando y preprocesando datos...")
-df = pl.read_csv("Students_Grading_Dataset.csv")
+print("=== CARGANDO Y PREPROCESANDO DATOS ===")
+
+# Cargar datos
+df = pl.read_csv("/content/Students_Grading_Dataset.csv")
 
 # Eliminar columnas irrelevantes
-df = df.drop(["Student_ID", "First_Name", "Last_Name", "Email"])
+cols_to_drop = ["Student_ID", "First_Name", "Last_Name", "Email"]
+df = df.drop([col for col in cols_to_drop if col in df.columns])
 
 # Codificación de variables categóricas
 categorical_cols = [
@@ -490,9 +499,10 @@ categorical_cols = [
 
 label_encoders = {}
 for col in categorical_cols:
-    le = LabelEncoder()
-    df = df.with_columns(pl.Series(name=col, values=le.fit_transform(df[col].to_list())))
-    label_encoders[col] = le
+    if col in df.columns:
+        le = LabelEncoder()
+        df = df.with_columns(pl.Series(name=col, values=le.fit_transform(df[col].to_list())))
+        label_encoders[col] = le
 
 class_names = label_encoders["Grade"].classes_
 
@@ -505,10 +515,17 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.3, stratify=y, random_state=42
 )
 
+print(f"\nDatos después de división:")
+print(f"X_train: {X_train.shape}, y_train: {y_train.shape}")
+print(f"X_test: {X_test.shape}, y_test: {y_test.shape}")
+
 # Balanceo con SMOTE
-print(" Aplicando SMOTE...")
+print("\n=== APLICANDO SMOTE ===")
 smote = SMOTE(random_state=42)
 X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
+
+print(f"\nDatos después de SMOTE:")
+print(f"X_train_balanced: {X_train_balanced.shape}, y_train_balanced: {y_train_balanced.shape}")
 
 # Normalización
 scaler = StandardScaler()
@@ -518,9 +535,10 @@ X_test_scaled = scaler.transform(X_test)
 # =============================================
 # BÚSQUEDA DE HIPERPARÁMETROS
 # =============================================
-print("\n🔍 Buscando el mejor k y tipo de pesos...")
+print("\n=== BUSCANDO MEJORES HIPERPARÁMETROS ===")
+
 param_grid = {
-    "n_neighbors": range(3, 15),
+    "n_neighbors": list(range(3, 15, 2)),
     "weights": ["uniform", "distance"],
     "metric": ["euclidean", "manhattan"]
 }
@@ -530,104 +548,125 @@ grid_search = GridSearchCV(
     param_grid=param_grid,
     scoring="accuracy",
     cv=5,
-    n_jobs=-1
+    n_jobs=-1,
+    verbose=1
 )
+
 grid_search.fit(X_train_scaled, y_train_balanced)
 
 best_knn = grid_search.best_estimator_
-print(f" Mejor modelo: {grid_search.best_params_} con accuracy={grid_search.best_score_:.4f}")
+print(f"\nMejor modelo: {grid_search.best_params_}")
+print(f"Accuracy (CV): {grid_search.best_score_:.4f}")
 
 # =============================================
 # EVALUACIÓN DEL MODELO
 # =============================================
-print("\n Evaluando modelo...")
+print("\n=== EVALUANDO MODELO ===")
+
+# Generar predicciones
+y_pred = best_knn.predict(X_test_scaled)
+
+# Verificar dimensiones
+print(f"\nDimensiones para evaluación:")
+print(f"X_test_scaled: {X_test_scaled.shape}")
+print(f"y_test: {y_test.shape}")
+print(f"y_pred: {y_pred.shape}")
 
 # Reporte de clasificación
-print("Accuracy:", accuracy_score(y_test, y_pred))
-print("\n Reporte de Clasificación:\n", classification_report(y_test, y_pred, target_names=class_names))
+print("\nAccuracy:", accuracy_score(y_test, y_pred))
+print("\nReporte de Clasificación:\n", classification_report(y_test, y_pred, target_names=class_names))
 
 # Matriz de confusión
-plt.figure(figsize=(8, 6))
+plt.figure(figsize=(10, 8))
 cm = confusion_matrix(y_test, y_pred)
-sns.heatmap(cm, annot=True, fmt="d", cmap="Greens", xticklabels=class_names, yticklabels=class_names)
-plt.title("Matriz de Confusión")
-plt.xlabel("Predicho")
-plt.ylabel("Real")
-plt.show()
-
-# Visualización de errores de predicción
-import pandas as pd
-
-# DataFrame con predicciones y reales
-error_df = pd.DataFrame({
-    "Real": label_encoders["Grade"].inverse_transform(y_test),
-    "Predicho": label_encoders["Grade"].inverse_transform(y_pred)
-})
-error_df["Correcto"] = error_df["Real"] == error_df["Predicho"]
-
-# Gráfico de errores por clase real
-error_counts = error_df[~error_df["Correcto"]].groupby("Real").size().sort_values(ascending=False)
-
-plt.figure(figsize=(10, 5))
-sns.barplot(x=error_counts.index, y=error_counts.values, palette="Reds_r")
-plt.title("Errores de Clasificación por Clase Real")
-plt.ylabel("Cantidad de Errores")
-plt.xlabel("Clase Real")
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.show()
-
-# Heatmap de Real vs Predicho
-error_matrix = pd.crosstab(error_df["Real"], error_df["Predicho"])
-plt.figure(figsize=(8, 6))
-sns.heatmap(error_matrix, annot=True, fmt="d", cmap="YlGnBu")
-plt.title("Errores de Clasificación (Real vs Predicho)")
-plt.xlabel("Predicho")
-plt.ylabel("Real")
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", 
+            xticklabels=class_names, yticklabels=class_names,
+            cbar=False)
+plt.title("Matriz de Confusión", pad=20, fontsize=14)
+plt.xlabel("Predicho", fontsize=12)
+plt.ylabel("Real", fontsize=12)
 plt.xticks(rotation=45)
 plt.yticks(rotation=0)
 plt.tight_layout()
 plt.show()
 
 # =============================================
-# EVALUACIÓN ADICIONAL POR MÉTRICA DE DISTANCIA
+# ANÁLISIS DE ERRORES (VERSIÓN CORREGIDA)
 # =============================================
-print("\n Evaluación de diferentes métricas y valores de k...")
+error_df = pl.DataFrame({
+    "Real": label_encoders["Grade"].inverse_transform(y_test),
+    "Predicho": label_encoders["Grade"].inverse_transform(y_pred)
+}).with_columns(
+    correcto = pl.col("Real") == pl.col("Predicho")
+)
+
+# Versión corregida usando group_by (Polars) en lugar de groupby (Pandas)
+error_counts = (error_df.filter(pl.col("correcto") == False)
+               .group_by("Real")
+               .agg(pl.count().alias("count"))
+               .sort("count", descending=True))
+
+# Convertir a Pandas para la visualización con Seaborn
+error_counts_pd = error_counts.to_pandas()
+
+plt.figure(figsize=(12, 6))
+ax = sns.barplot(data=error_counts_pd, x="Real", y="count")
+plt.title("Distribución de Errores por Clase Real", fontsize=14)
+plt.xlabel("Clase Real", fontsize=12)
+plt.ylabel("Cantidad de Errores", fontsize=12)
+ax.bar_label(ax.containers[0], fontsize=10)
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# =============================================
+# EVALUACIÓN ADICIONAL DE MÉTRICAS
+# =============================================
+print("\n=== EVALUANDO DIFERENTES MÉTRICAS ===")
+
 k_values = range(1, 21, 2)
 distance_metrics = ['euclidean', 'manhattan', 'cosine']
 cv_scores = {}
 
 for metric in distance_metrics:
-    print(f"\n Métrica: {metric}")
-    scores_list = []
-    for k in tqdm(k_values, desc=f"k={metric}"):
-        knn_model = KNeighborsClassifier(n_neighbors=k, metric=metric)
-        scores = cross_val_score(knn_model, X_train_scaled, y_train_balanced, cv=5, scoring="accuracy")
-        scores_list.append(scores.mean())
-    cv_scores[metric] = scores_list
-    best_k = k_values[np.argmax(scores_list)]
-    print(f" Mejor k: {best_k} con accuracy={max(scores_list):.4f}")
+    print(f"\nMétrica: {metric.upper()}")
+    scores = []
+    for k in tqdm(k_values, desc=f"k values ({metric})"):
+        model = KNeighborsClassifier(n_neighbors=k, metric=metric)
+        cv_scores_metric = cross_val_score(model, X_train_scaled, y_train_balanced, cv=5, scoring='accuracy')
+        scores.append(cv_scores_metric.mean())
+    
+    cv_scores[metric] = scores
+    best_k = k_values[np.argmax(scores)]
+    print(f"Mejor k: {best_k} | Accuracy: {max(scores):.4f}")
 
 # Visualización comparativa
-plt.figure(figsize=(10, 6))
-for metric in cv_scores:
-    plt.plot(k_values, cv_scores[metric], marker='o', label=f"{metric}")
-plt.title("Comparación de Accuracy por k y Métrica de Distancia")
-plt.xlabel("Valor de k")
-plt.ylabel("Accuracy")
-plt.legend()
-plt.grid(True)
+plt.figure(figsize=(12, 6))
+for metric, scores in cv_scores.items():
+    plt.plot(k_values, scores, marker='o', linestyle='--', label=metric, linewidth=2)
+
+plt.title("Comparación de Métricas de Distancia", fontsize=14)
+plt.xlabel("Valor de k", fontsize=12)
+plt.ylabel("Accuracy Promedio (CV)", fontsize=12)
+plt.legend(title="Métrica", title_fontsize=12)
+plt.grid(True, alpha=0.3)
+plt.xticks(k_values)
 plt.tight_layout()
 plt.show()
 
-print("\n Análisis completado con éxito.")
+print("\n=== ANÁLISIS COMPLETADO CON ÉXITO ===")
+print("")
+print ("Jannet Ortiz Aguilar")
 
 RESULTADO
 
-![image](https://github.com/user-attachments/assets/dd4f561e-e464-4e2b-b23e-25d61e427714)
+![image](https://github.com/user-attachments/assets/763e5006-e9c9-498c-8318-7d5248dca0bf)
 
-![image](https://github.com/user-attachments/assets/9123c8c4-3811-4158-9e02-a94f3d6b750b)
+![image](https://github.com/user-attachments/assets/23478226-62e6-45cd-aae5-7e3d3eadb123)
 
-![image](https://github.com/user-attachments/assets/7a71c133-6eff-4a87-b9a8-f5f1c08e8487)
+![image](https://github.com/user-attachments/assets/46dfc340-aa73-4a98-b7e9-e1f2478e2b93)
 
-![image](https://github.com/user-attachments/assets/c9295128-2a18-41cc-b50a-dbaf0e778f8c)
+![image](https://github.com/user-attachments/assets/e9797912-b7ff-4bcd-8ede-d408fd8b470d)
+
+
+
