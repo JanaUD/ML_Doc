@@ -71,6 +71,7 @@ RESULTADOS:
 
 R=== REGLAS DE ASOCIACIÓN ENCONTRADAS ===
 shape: (9, 5)
+
 ![image](https://github.com/user-attachments/assets/d798bc8f-0b7b-4ae0-8bd5-1803a2c10a3f)
 
 
@@ -128,6 +129,7 @@ RESULTADOS
 
 === REGLAS DE ASOCIACIÓN ENCONTRADAS ===
 shape: (9, 5)
+
 ![image](https://github.com/user-attachments/assets/9c296eb1-0b92-436b-a97e-60080b43d39d)
 
 
