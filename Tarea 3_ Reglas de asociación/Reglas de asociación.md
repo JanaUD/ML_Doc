@@ -71,21 +71,8 @@ RESULTADOS:
 
 R=== REGLAS DE ASOCIACIÓN ENCONTRADAS ===
 shape: (9, 5)
-┌─────────────────────┬─────────────┬───────────┬─────────┬───────┐
-│ Antecedente         ┆ Consecuente ┆ Confianza ┆ Soporte ┆ Lift  │
-│ ---                 ┆ ---         ┆ ---       ┆ ---     ┆ ---   │
-│ list[str]           ┆ list[str]   ┆ f64       ┆ f64     ┆ f64   │
-╞═════════════════════╪═════════════╪═══════════╪═════════╪═══════╡
-│ ["Butter"]          ┆ ["Bread"]   ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Bread"]           ┆ ["Butter"]  ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Milk"]            ┆ ["Bread"]   ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Bread"]           ┆ ["Milk"]    ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Milk"]            ┆ ["Butter"]  ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Butter"]          ┆ ["Milk"]    ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Butter", "Milk"]  ┆ ["Bread"]   ┆ 0.667     ┆ 0.4     ┆ 0.833 │
-│ ["Bread", "Milk"]   ┆ ["Butter"]  ┆ 0.667     ┆ 0.4     ┆ 0.833 │
-│ ["Bread", "Butter"] ┆ ["Milk"]    ┆ 0.667     ┆ 0.4     ┆ 0.833 │
-└─────────────────────┴─────────────┴───────────┴─────────┴───────┘
+![image](https://github.com/user-attachments/assets/d798bc8f-0b7b-4ae0-8bd5-1803a2c10a3f)
+
 
 Jannet Ortiz Aguilar
 
@@ -141,21 +128,8 @@ RESULTADOS
 
 === REGLAS DE ASOCIACIÓN ENCONTRADAS ===
 shape: (9, 5)
-┌─────────────────────┬─────────────┬───────────┬─────────┬───────┐
-│ Antecedente         ┆ Consecuente ┆ Confianza ┆ Soporte ┆ Lift  │
-│ ---                 ┆ ---         ┆ ---       ┆ ---     ┆ ---   │
-│ list[str]           ┆ list[str]   ┆ f64       ┆ f64     ┆ f64   │
-╞═════════════════════╪═════════════╪═══════════╪═════════╪═══════╡
-│ ["Butter"]          ┆ ["Bread"]   ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Bread"]           ┆ ["Butter"]  ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Milk"]            ┆ ["Bread"]   ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Bread"]           ┆ ["Milk"]    ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Milk"]            ┆ ["Butter"]  ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Butter"]          ┆ ["Milk"]    ┆ 0.75      ┆ 0.6     ┆ 0.938 │
-│ ["Butter", "Milk"]  ┆ ["Bread"]   ┆ 0.667     ┆ 0.4     ┆ 0.833 │
-│ ["Bread", "Milk"]   ┆ ["Butter"]  ┆ 0.667     ┆ 0.4     ┆ 0.833 │
-│ ["Bread", "Butter"] ┆ ["Milk"]    ┆ 0.667     ┆ 0.4     ┆ 0.833 │
-└─────────────────────┴─────────────┴───────────┴─────────┴───────┘
+![image](https://github.com/user-attachments/assets/9c296eb1-0b92-436b-a97e-60080b43d39d)
+
 
 # 3. Comparación de resultados Apriori Vs FP-GROWTH (Visualización tabular)
 # Apriori
