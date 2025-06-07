@@ -1,4 +1,6 @@
 # Tarea 4_Hopfield y PCA: se busca el recorrido por todas las ciudades que demore menos tiempo, sin repetir ciudad utilizando redes de Hopfield
+
+# Uso de redes de Hopfield para buscar el recorrido por todas las ciudades que demore menos tiempo y sin repetir ciudad. 
 # Importar librerías necesarias
   import random
   import math
@@ -33,10 +35,10 @@
       
       return mejor_ruta, menor_distancia
 # Ejecutar fuerza bruta
-  ruta_optima, dist_optima = fuerza_bruta_tsp()
-  print("Ruta óptima:", [ciudades[i] for i in ruta_optima])
-  print("Distancia óptima:", dist_optima)
-  print()
+    ruta_optima, dist_optima = fuerza_bruta_tsp()
+    print("Ruta óptima:", [ciudades[i] for i in ruta_optima])
+    print("Distancia óptima:", dist_optima)
+    print()
 
 # 3. Red de Hopfield
     def hopfield_tsp_simple(max_iter=1000):
@@ -75,13 +77,13 @@
 
 # 4. Visualización con Gráfica de Colores
 # Coordenadas ficticias basadas en distancias
-  coordenadas = {
-        'A': (1, 2),
-        'B': (3, 5),
-        'C': (4, 3),
-        'D': (6, 4),
-        'E': (2, 1)
-    }
+    coordenadas = {
+          'A': (1, 2),
+          'B': (3, 5),
+          'C': (4, 3),
+          'D': (6, 4),
+          'E': (2, 1)
+      }
 
 # Crear figura
     plt.figure(figsize=(10, 6))
@@ -122,3 +124,43 @@
 
 
 # Código para utilización PCA que permite visualizar gráficas en 2D una base de datos de MNIST
+
+!pip install numpy
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.datasets import fetch_openml
+
+# Cargar los datos de MNIST desde OpenML
+mnist = fetch_openml('mnist_784', version=1, as_frame=False)
+
+# Extraer las imágenes y etiquetas
+X = mnist.data  # Matriz de características (70,000 imágenes de 784 píxeles cada una)
+y = mnist.target.astype(int)  # Etiquetas de los dígitos
+
+# Aplicar PCA con 2 componentes
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X)
+
+# Definir una paleta de colores para los dígitos
+plt.figure(figsize=(10, 8))
+scatter = plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis', alpha=0.7, s=15)
+
+# Añadir la barra de color con el nuevo label
+plt.colorbar(scatter, label="Dígitos", ticks=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+# Etiquetas y título
+plt.xlabel("Componente Principal 1 - Dirección de máxima varianza")
+plt.ylabel("Componente Principal 2 - Dirección perpendicular a PC1")
+plt.title("VISUALIZACIÓN DE MNIST EN 2D USANDO PCA")
+
+# Mostrar la gráfica
+plt.show()
+print("")
+print ("Jannet Ortiz Aguilar") 
+
+# RESULTADOS
+
+![image](https://github.com/user-attachments/assets/5b6aa71e-8991-4049-b017-05374efbfdf0)
+
