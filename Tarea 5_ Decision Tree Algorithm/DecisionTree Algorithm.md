@@ -1,4 +1,4 @@
-# Tarea 5_ Decision Tree Algorithm: 
+# Corrección Tarea 5_ Decision Tree Algorithm: 
 # implementación completa de un árbol de decisión categórico
 
 # Instalación de dependencias
