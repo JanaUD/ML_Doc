@@ -4,202 +4,166 @@
 
 # Primero, se instalan las librerías necesarias en Colab
   !pip install polars efficient-apriori great-tables
-  # Importar las librerías
-  import polars as pl
-  from efficient_apriori import apriori
-  from great_tables import GT, loc, style
-  
-  # Datos de las transacciones
-  transacciones = [
-      ["Milk", "Bread", "Butter"],
-      ["Milk", "Bread"],
-      ["Bread", "Butter"],
-      ["Milk", "Butter"],
-      ["Milk", "Bread", "Butter"]
-  ]
-    # Aplicar el algoritmo Apriori
-  conjuntos, reglas = apriori(transacciones, min_support=0.1, min_confidence=0.1)
-  print("Reglas encontradas:", reglas, end="\n\n")
-  
-  # Extraer las variables asociadas a cada una de las reglas
-    antecedentes = [list(rule.lhs) for rule in reglas]
-    print("Antecedentes:", antecedentes)
-    consecuentes = [list(rule.rhs) for rule in reglas]
-    print("Consecuentes:", consecuentes)
-    confianza = [rule.confidence for rule in reglas]
-    print("Confianza:", confianza)
-    soporte = [rule.support for rule in reglas]
-    print("Soporte:", soporte)
-    lift = [rule.lift for rule in reglas]
-    print("Lift:", lift)
-  
-  # Crear un dataframe de Polars con los datos obtenidos
-    df_reglas = pl.DataFrame(
-        {
-            "Antecedente": antecedentes,
-            "Consecuente": consecuentes,
-            "Confianza": confianza,
-            "Soporte": soporte,
-            "Lift": lift
-        }
+     # Importar las librerías necesarias
+import polars as pl
+from efficient_apriori import apriori
+from great_tables import GT, loc, style
+
+def main():
+    # Datos de las transacciones (mejor estructuración)
+    transacciones = [
+        ["Milk", "Bread", "Butter"],
+        ["Milk", "Bread"],
+        ["Bread", "Butter"],
+        ["Milk", "Butter"],
+        ["Milk", "Bread", "Butter"]
+    ]
+    
+    # Aplicar el algoritmo Apriori con parámetros ajustados
+    itemsets, rules = apriori(
+        transacciones, 
+        min_support=0.3,  # Aumentado para este dataset pequeño
+        min_confidence=0.6  # Aumentado para reglas más significativas
     )
-  
-  # Mostrar el dataframe
-    print(df_reglas)
-    print("")
-  print ("Jannet Ortiz Aguilar")
+    
+    # Procesamiento más eficiente de las reglas
+    if not rules:
+        print("No se encontraron reglas significativas con los parámetros actuales.")
+        return
+    
+    # Extracción de métricas en una sola iteración
+    rule_data = {
+        "Antecedente": [list(rule.lhs) for rule in rules],
+        "Consecuente": [list(rule.rhs) for rule in rules],
+        "Confianza": [round(rule.confidence, 3) for rule in rules],
+        "Soporte": [round(rule.support, 3) for rule in rules],
+        "Lift": [round(rule.lift, 3) for rule in rules]
+    }
+    
+    # Creación del DataFrame con Polars
+    df_rules = pl.DataFrame(rule_data).sort("Lift", descending=True)
+    
+    # Visualización mejorada
+    print("\n=== REGLAS DE ASOCIACIÓN ENCONTRADAS ===")
+    print(df_rules)
+    
+    # Creación de tabla visual con Great Tables
+    if len(df_rules) > 0:
+        gt_table = (
+            GT(df_rules.to_pandas())
+            .tab_header(title="Análisis de Reglas de Asociación")
+            .fmt_number(columns=["Confianza", "Soporte", "Lift"], decimals=3)
+            .data_color(
+                columns=["Lift"],
+                palette=["red", "green"],
+                domain=[min(rule_data["Lift"]), max(rule_data["Lift"])]
+            )
+        )
+        print("\nVisualización tabular:")
+        display(gt_table)  # Para entornos como Jupyter/Colab
+    
+    print("\nJannet Ortiz Aguilar")
+
+if __name__ == "__main__":
+    main()
 
 RESULTADOS: 
 
-Reglas encontradas: [{Butter} -> {Bread}, {Bread} -> {Butter}, {Milk} -> {Bread}, {Bread} -> {Milk}, {Milk} -> {Butter}, {Butter} -> {Milk}, {Butter, Milk} -> {Bread}, {Bread, Milk} -> {Butter}, {Bread, Butter} -> {Milk}, {Milk} -> {Bread, Butter}, {Butter} -> {Bread, Milk}, {Bread} -> {Butter, Milk}]
-Antecedentes: [['Butter'], ['Bread'], ['Milk'], ['Bread'], ['Milk'], ['Butter'], ['Butter', 'Milk'], ['Bread', 'Milk'], ['Bread', 'Butter'], ['Milk'], ['Butter'], ['Bread']]
-Consecuentes: [['Bread'], ['Butter'], ['Bread'], ['Milk'], ['Butter'], ['Milk'], ['Bread'], ['Butter'], ['Milk'], ['Bread', 'Butter'], ['Bread', 'Milk'], ['Butter', 'Milk']]
-Confianza: [0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.6666666666666666, 0.6666666666666666, 0.6666666666666666, 0.5, 0.5, 0.5]
-Soporte: [0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4]
-Lift: [0.9375, 0.9375, 0.9375, 0.9375, 0.9375, 0.9375, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334]
-shape: (12, 5)
+R=== REGLAS DE ASOCIACIÓN ENCONTRADAS ===
+shape: (9, 5)
+┌─────────────────────┬─────────────┬───────────┬─────────┬───────┐
+│ Antecedente         ┆ Consecuente ┆ Confianza ┆ Soporte ┆ Lift  │
+│ ---                 ┆ ---         ┆ ---       ┆ ---     ┆ ---   │
+│ list[str]           ┆ list[str]   ┆ f64       ┆ f64     ┆ f64   │
+╞═════════════════════╪═════════════╪═══════════╪═════════╪═══════╡
+│ ["Butter"]          ┆ ["Bread"]   ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Bread"]           ┆ ["Butter"]  ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Milk"]            ┆ ["Bread"]   ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Bread"]           ┆ ["Milk"]    ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Milk"]            ┆ ["Butter"]  ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Butter"]          ┆ ["Milk"]    ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Butter", "Milk"]  ┆ ["Bread"]   ┆ 0.667     ┆ 0.4     ┆ 0.833 │
+│ ["Bread", "Milk"]   ┆ ["Butter"]  ┆ 0.667     ┆ 0.4     ┆ 0.833 │
+│ ["Bread", "Butter"] ┆ ["Milk"]    ┆ 0.667     ┆ 0.4     ┆ 0.833 │
+└─────────────────────┴─────────────┴───────────┴─────────┴───────┘
 
-┌─────────────────────┬─────────────────────┬───────────┬─────────┬──────────┐
-│ Antecedente         ┆ Consecuente         ┆ Confianza ┆ Soporte ┆ Lift     │
-│ ---                 ┆ ---                 ┆ ---       ┆ ---     ┆ ---      │
-│ list[str]           ┆ list[str]           ┆ f64       ┆ f64     ┆ f64      │
-╞═════════════════════╪═════════════════════╪═══════════╪═════════╪══════════╡
-│ ["Butter"]          ┆ ["Bread"]           ┆ 0.75      ┆ 0.6     ┆ 0.9375   │
-│ ["Bread"]           ┆ ["Butter"]          ┆ 0.75      ┆ 0.6     ┆ 0.9375   │
-│ ["Milk"]            ┆ ["Bread"]           ┆ 0.75      ┆ 0.6     ┆ 0.9375   │
-│ ["Bread"]           ┆ ["Milk"]            ┆ 0.75      ┆ 0.6     ┆ 0.9375   │
-│ ["Milk"]            ┆ ["Butter"]          ┆ 0.75      ┆ 0.6     ┆ 0.9375   │
-│ …                   ┆ …                   ┆ …         ┆ …       ┆ …        │
-│ ["Bread", "Milk"]   ┆ ["Butter"]          ┆ 0.666667  ┆ 0.4     ┆ 0.833333 │
-│ ["Bread", "Butter"] ┆ ["Milk"]            ┆ 0.666667  ┆ 0.4     ┆ 0.833333 │
-│ ["Milk"]            ┆ ["Bread", "Butter"] ┆ 0.5       ┆ 0.4     ┆ 0.833333 │
-│ ["Butter"]          ┆ ["Bread", "Milk"]   ┆ 0.5       ┆ 0.4     ┆ 0.833333 │
-│ ["Bread"]           ┆ ["Butter", "Milk"]  ┆ 0.5       ┆ 0.4     ┆ 0.833333 │
-└─────────────────────┴─────────────────────┴───────────┴─────────┴──────────┘
 Jannet Ortiz Aguilar
 
 
 # 2. APLIACACIÓN DEL ALGORITMO FP-GROWTH
 # Primero,  se instalan las librerías necesarias
-  import pandas as pd
-  from mlxtend.frequent_patterns import fpgrowth, association_rules
-  from mlxtend.preprocessing import TransactionEncoder
-  from tabulate import tabulate
-  
-  # Datos de las transacciones
-  transacciones = [
-      ["Milk", "Bread", "Butter"],
-      ["Milk", "Bread"],
-      ["Bread", "Butter"],
-      ["Milk", "Butter"],
-      ["Milk", "Bread", "Butter"]
-  ]
-  
-  # Se aplica el algoritmo TransactionEncoder para transformar las transacciones
-    encoder = TransactionEncoder()
-    encoded_array = encoder.fit(transacciones).transform(transacciones)
-  
-  # Se converte los datos transformados en un DataFrame
-    df = pd.DataFrame(encoded_array, columns=encoder.columns_)
-  
-  # Se calculan los patrones frecuentes (soporte mínimo de 0.1) y reglas de asociación (soporte mínimo de 0.6 para el lift)
-    frequent_itemsets = fpgrowth(df, min_support=0.1, use_colnames=True)
-    rules = association_rules(frequent_itemsets, metric="lift", min_threshold=0.6)
-  
-  # Se Convierte los conjuntos de antecedente y consecuente en listas para que sean más legibles
-    rules['antecedents'] = rules['antecedents'].apply(lambda x: list(x))
-    rules['consequents'] = rules['consequents'].apply(lambda x: list(x))
-    print(rules)
-  
-  # Se Seleccionan las columnas relevantes: antecedentes, consecuentes, confianza, soporte y lift
-    result = rules[['antecedents', 'consequents', 'confidence', 'support', 'lift']]
-  
-  # Se da formato a la tabla utilizando tabulate para hacerla más legible
-    formatted_result = tabulate(result, headers='keys', tablefmt='fancy_grid', showindex=False)
-  
-  # Imprimir la tabla formateada
-    print(formatted_result)
+ import pandas as pd
+from mlxtend.frequent_patterns import fpgrowth, association_rules
+from mlxtend.preprocessing import TransactionEncoder
+from tabulate import tabulate
+
+# Datos de las transacciones
+transacciones = [
+    ["Milk", "Bread", "Butter"],
+    ["Milk", "Bread"],
+    ["Bread", "Butter"],
+    ["Milk", "Butter"],
+    ["Milk", "Bread", "Butter"]
+]
+
+# Se aplica el algoritmo TransactionEncoder para transformar las transacciones
+encoder = TransactionEncoder()
+encoded_array = encoder.fit(transacciones).transform(transacciones)
+
+# Se converte los datos transformados en un DataFrame
+df = pd.DataFrame(encoded_array, columns=encoder.columns_)
+
+# Se calculan los patrones frecuentes (soporte mínimo de 0.1) y reglas de asociación (soporte mínimo de 0.6 para el lift)
+frequent_itemsets = fpgrowth(df, min_support=0.1, use_colnames=True)
+rules = association_rules(frequent_itemsets, metric="lift", min_threshold=0.6)
+
+# Se Convierte los conjuntos de antecedente y consecuente en listas para que sean más legibles
+rules['antecedents'] = rules['antecedents'].apply(lambda x: list(x))
+rules['consequents'] = rules['consequents'].apply(lambda x: list(x))
+print(rules)
+
+# Se Seleccionan las columnas relevantes: antecedentes, consecuentes, confianza, soporte y lift
+result = rules[['antecedents', 'consequents', 'confidence', 'support', 'lift']]
+
+# Se da formato a la tabla utilizando tabulate para hacerla más legible
+formatted_result = tabulate(result, headers='keys', tablefmt='fancy_grid', showindex=False)
+
+# Imprimir la tabla formateada
+print(formatted_result)
     
-    print("")
-  print ("Jannet Ortiz Aguilar")
+print("")
+print("Jannet Ortiz Aguilar")
+
+if __name__ == "__main__":
+    main()
 
 RESULTADOS
 
- ╒═════════════════════╤═════════════════════╤══════════════╤═══════════╤══════════╕
-│ antecedents         │ consequents         │   confidence │   support │     lift │
-╞═════════════════════╪═════════════════════╪══════════════╪═══════════╪══════════╡
-│ ['Butter']          │ ['Milk']            │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Milk']            │ ['Butter']          │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Bread']           │ ['Butter']          │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Butter']          │ ['Bread']           │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Bread']           │ ['Milk']            │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Milk']            │ ['Bread']           │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Bread', 'Butter'] │ ['Milk']            │     0.666667 │       0.4 │ 0.833333 │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Bread', 'Milk']   │ ['Butter']          │     0.666667 │       0.4 │ 0.833333 │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Butter', 'Milk']  │ ['Bread']           │     0.666667 │       0.4 │ 0.833333 │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Bread']           │ ['Butter', 'Milk']  │     0.5      │       0.4 │ 0.833333 │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Butter']          │ ['Bread', 'Milk']   │     0.5      │       0.4 │ 0.833333 │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Milk']            │ ['Bread', 'Butter'] │     0.5      │       0.4 │ 0.833333 │
-╘═════════════════════╧═════════════════════╧══════════════╧═══════════╧══════════╛
+=== REGLAS DE ASOCIACIÓN ENCONTRADAS ===
+shape: (9, 5)
+┌─────────────────────┬─────────────┬───────────┬─────────┬───────┐
+│ Antecedente         ┆ Consecuente ┆ Confianza ┆ Soporte ┆ Lift  │
+│ ---                 ┆ ---         ┆ ---       ┆ ---     ┆ ---   │
+│ list[str]           ┆ list[str]   ┆ f64       ┆ f64     ┆ f64   │
+╞═════════════════════╪═════════════╪═══════════╪═════════╪═══════╡
+│ ["Butter"]          ┆ ["Bread"]   ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Bread"]           ┆ ["Butter"]  ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Milk"]            ┆ ["Bread"]   ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Bread"]           ┆ ["Milk"]    ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Milk"]            ┆ ["Butter"]  ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Butter"]          ┆ ["Milk"]    ┆ 0.75      ┆ 0.6     ┆ 0.938 │
+│ ["Butter", "Milk"]  ┆ ["Bread"]   ┆ 0.667     ┆ 0.4     ┆ 0.833 │
+│ ["Bread", "Milk"]   ┆ ["Butter"]  ┆ 0.667     ┆ 0.4     ┆ 0.833 │
+│ ["Bread", "Butter"] ┆ ["Milk"]    ┆ 0.667     ┆ 0.4     ┆ 0.833 │
+└─────────────────────┴─────────────┴───────────┴─────────┴───────┘
 
-# 3. Comparación de resultados Apriori Vs FP-GROWTH
+# 3. Comparación de resultados Apriori Vs FP-GROWTH (Visualización tabular)
 # Apriori
-┌─────────────────────┬─────────────────────┬───────────┬─────────┬──────────┐
-│ Antecedente         ┆ Consecuente         ┆ Confianza ┆ Soporte ┆ Lift     │
-│ ---                 ┆ ---                 ┆ ---       ┆ ---     ┆ ---      │
-│ list[str]           ┆ list[str]           ┆ f64       ┆ f64     ┆ f64      │
-╞═════════════════════╪═════════════════════╪═══════════╪═════════╪══════════╡
-│ ["Butter"]          ┆ ["Bread"]           ┆ 0.75      ┆ 0.6     ┆ 0.9375   │
-│ ["Bread"]           ┆ ["Butter"]          ┆ 0.75      ┆ 0.6     ┆ 0.9375   │
-│ ["Milk"]            ┆ ["Bread"]           ┆ 0.75      ┆ 0.6     ┆ 0.9375   │
-│ ["Bread"]           ┆ ["Milk"]            ┆ 0.75      ┆ 0.6     ┆ 0.9375   │
-│ ["Milk"]            ┆ ["Butter"]          ┆ 0.75      ┆ 0.6     ┆ 0.9375   │
-│ …                   ┆ …                   ┆ …         ┆ …       ┆ …        │
-│ ["Bread", "Milk"]   ┆ ["Butter"]          ┆ 0.666667  ┆ 0.4     ┆ 0.833333 │
-│ ["Bread", "Butter"] ┆ ["Milk"]            ┆ 0.666667  ┆ 0.4     ┆ 0.833333 │
-│ ["Milk"]            ┆ ["Bread", "Butter"] ┆ 0.5       ┆ 0.4     ┆ 0.833333 │
-│ ["Butter"]          ┆ ["Bread", "Milk"]   ┆ 0.5       ┆ 0.4     ┆ 0.833333 │
-│ ["Bread"]           ┆ ["Butter", "Milk"]  ┆ 0.5       ┆ 0.4     ┆ 0.833333 │
-└─────────────────────┴─────────────────────┴───────────┴─────────┴──────────┘
+![image](https://github.com/user-attachments/assets/879957eb-40d7-4464-a104-f7b79916fd99)
+
 Jannet Ortiz Aguilar
 
 # FP-GROWTH
- ╒═════════════════════╤═════════════════════╤══════════════╤═══════════╤══════════╕
-│ antecedents         │ consequents         │   confidence │   support │     lift │
-╞═════════════════════╪═════════════════════╪══════════════╪═══════════╪══════════╡
-│ ['Butter']          │ ['Milk']            │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Milk']            │ ['Butter']          │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Bread']           │ ['Butter']          │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Butter']          │ ['Bread']           │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Bread']           │ ['Milk']            │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Milk']            │ ['Bread']           │     0.75     │       0.6 │ 0.9375   │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Bread', 'Butter'] │ ['Milk']            │     0.666667 │       0.4 │ 0.833333 │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Bread', 'Milk']   │ ['Butter']          │     0.666667 │       0.4 │ 0.833333 │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Butter', 'Milk']  │ ['Bread']           │     0.666667 │       0.4 │ 0.833333 │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Bread']           │ ['Butter', 'Milk']  │     0.5      │       0.4 │ 0.833333 │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Butter']          │ ['Bread', 'Milk']   │     0.5      │       0.4 │ 0.833333 │
-├─────────────────────┼─────────────────────┼──────────────┼───────────┼──────────┤
-│ ['Milk']            │ ['Bread', 'Butter'] │     0.5      │       0.4 │ 0.833333 │
-╘═════════════════════╧═════════════════════╧══════════════╧═══════════╧══════════╛
+![image](https://github.com/user-attachments/assets/31ce7ef5-3708-417b-8bfe-a3508f8f7815)
+
 Jannet Ortiz Aguilar
