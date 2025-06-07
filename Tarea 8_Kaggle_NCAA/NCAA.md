@@ -842,3 +842,5 @@ image
     predict_tournament('W')  # Torneo femenino
     
     print("\nDesarrollado por: J.E. Carmona Alvarez & J. Ortiz-Aguilar")
+
+
