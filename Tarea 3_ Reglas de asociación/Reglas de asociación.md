@@ -132,12 +132,6 @@ shape: (9, 5)
 
 
 # 3. Comparación de resultados Apriori Vs FP-GROWTH (Visualización tabular)
-# Apriori
-![image](https://github.com/user-attachments/assets/879957eb-40d7-4464-a104-f7b79916fd99)
 
-Jannet Ortiz Aguilar
+![image](https://github.com/user-attachments/assets/4857f34f-4a86-437e-b4d1-6c2b7134ca51)
 
-# FP-GROWTH
-![image](https://github.com/user-attachments/assets/31ce7ef5-3708-417b-8bfe-a3508f8f7815)
-
-Jannet Ortiz Aguilar
