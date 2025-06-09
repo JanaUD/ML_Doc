@@ -1,4 +1,4 @@
-# Tarea Mycropython
+# Tarea 9_Mycropython
 A continuación se explica línea por línea el código que se implementa un clasificador Random Forest básico en MicroPython
 
 # 1. Importaciones y compatibilidad
