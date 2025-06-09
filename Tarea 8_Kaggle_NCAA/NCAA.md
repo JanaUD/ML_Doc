@@ -1,6 +1,4 @@
-![image](https://github.com/user-attachments/assets/041725b4-fce2-4ba5-9c5f-9046b7e181c7)Competición_MMLM2025_NCAA 2025
-
-COMPETENCIA DE KAGGEL March Machine Learning Mania 2025 Forecast the 2025 NCAA Basketball Tournaments
+# COMPETENCIA DE KAGGEL March Machine Learning Mania 2025 Forecast the 2025 NCAA Basketball Tournaments
 
 Enlace: https://www.kaggle.com/competitions/march-machine-learning-mania-2025/data
 
