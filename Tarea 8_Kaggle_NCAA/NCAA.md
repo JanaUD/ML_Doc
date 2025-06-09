@@ -35,7 +35,7 @@ NOTA: Para ejecutar correctamente el código primero debe subir al almacenamient
     
         # Calcular estadísticas para equipos perdedores
         l_stats = regular_data.groupby(['Season', 'LTeamID'])[l_stats_cols].mean()
-        l_stats = l_stats.rename(columns=lambda x: x[1:] if x.startswith('L') else x)
+        l_stats = l_stats.rename(columns=lambda x: x[1:] if x.startswith('L') else x) 
     
         # Combinar estadísticas
         team_stats = pd.concat([w_stats, l_stats])
