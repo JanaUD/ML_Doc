@@ -6,10 +6,10 @@ Enlace Colab: https://colab.research.google.com/drive/1UGjmn35SlBkCXzpmV4xXo5KZr
 
 NOTA: Para ejecutar correctamente el código primero debe subir al almacenamiento de Colab el archivo .zip que contiene todas las bases de datos de la competencia.
 
-1. Función para descomprimir el archivo .zip
+# 1. Función para descomprimir el archivo .zip
       !kaggle competitions download -c march-machine-learning-mania-2025
       !unzip march-machine-learning-mania-2025.zip
-2. Calculate_team_stats: Proceso para calcular los datos estadisticos relevantes de los datos representativos de cada equipo co el fin de determinar cuales son las posibles variables de peso y correlacionables para la predicción.
+# 2. Calculate_team_stats: Proceso para calcular los datos estadisticos relevantes de los datos representativos de cada equipo co el fin de determinar cuales son las posibles variables de peso y correlacionables para la predicción.
       def calculate_team_stats(regular_data):
         # Verificar columnas disponibles
         available_cols = regular_data.columns.tolist()
