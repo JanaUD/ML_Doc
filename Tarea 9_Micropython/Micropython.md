@@ -1,5 +1,9 @@
-# Tarea 9_Mycropython
-A continuación se explica línea por línea el código que se implementa un clasificador Random Forest básico en MicroPython
+# Tarea 9_Mycropython_RandonForestClassifieer
+
+# Explicación: 
+  RandomForestClassifier (Clasificadodr de Bosque Aleatorio) es un algotirmo de     aprendizaje automático supervisado utilizado para realizar tareas de clasificación;  pero, también es posible utilizarlo para rregresión (teniendo en cuenta pequeños  cambios); entendiendo que un bosque aleatorio es un modelo de aprendizaje automático (se basa en otros modelos para hacer predicciones), que entrena múltiples clasificadores de árboles de decisión sobre diferentes submuestras del conjunto de datos utilizando el promedio de los mismos. Adicionalmente, RandomForestClassifieer es parte de scitik.learn (biblioteca de apendizaje automático), esta utiliza dependencias externas como numpy, scipy, entre otras; realizando cálculos intensivos en memoria y CPU dl pc, las cuales no son compatibles con Micropython, 
+
+Ahora bien, la intención es realizar un código que haga la función del algoritmo RandomForestClassifier para Micropython que simule dicho algoritmo; por tal motivo, a continuac se presenta en MicroPython
 
 # 1. Importaciones y compatibilidad
  
