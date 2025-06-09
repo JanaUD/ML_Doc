@@ -54,7 +54,7 @@ NOTA: Para ejecutar correctamente el código primero debe subir al almacenamient
     
         return team_stats
 
-3. Prepare_training_set: Presentación y preparación de los datos con los que se va a entrenar el modelo.
+# 3. Prepare_training_set: Presentación y preparación de los datos con los que se va a entrenar el modelo.
       def prepare_training_set(tourney_data, team_stats):
         if team_stats is None or len(team_stats) == 0:
             raise ValueError("team_stats está vacío o no es válido")
