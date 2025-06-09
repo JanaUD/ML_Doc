@@ -78,4 +78,8 @@ A continuación se explica línea por línea el código que se implementa un cla
 
 Se obtienen e imprimen las predicciones del Random Forest y la salida esperada
 
-    
+# RESULTADOS
+
+![image](https://github.com/user-attachments/assets/9fb6461b-19da-46f2-9fc6-962b8373b50d)
+
+
