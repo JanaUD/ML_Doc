@@ -705,21 +705,23 @@ Columnas en cada archivo: Teams: ['TeamID', 'TeamName', 'FirstD1Season', 'LastD1
 
 PREDICCIONES TORNEO MASCULINO 2025
 
-RONDA 1: Duke vs Arizona Probabilidad: 0.52 -> GANADOR: Arizona
-Houston vs Purdue Probabilidad: 0.50 -> GANADOR: Purdue
-Florida vs Maryland Probabilidad: 0.51 -> GANADOR: Florida
-Auburn vs Texas A&M Probabilidad: 0.54 -> GANADOR: Texas A&M
-Michigan St vs Iowa St Probabilidad: 0.53 -> GANADOR: Michigan St
-St John's vs Texas Tech Probabilidad: 0.52 -> GANADOR: St John's
-Tennessee vs Kentucky Probabilidad: 0.52 -> GANADOR: Tennessee
-Alabama vs Wisconsin Probabilidad: 0.55 -> GANADOR: Wisconsin
-RONDA 2: Florida vs Tennessee Probabilidad: 0.51 -> GANADOR: Tennessee
-St John's vs Michigan St Probabilidad: 0.50 -> GANADOR: St John's
-Wisconsin vs Texas A&M Probabilidad: 0.53 -> GANADOR: Wisconsin
-Arizona vs Purdue Probabilidad: 0.55 -> GANADOR: Purdue
-SWEET 16: Tennessee vs St John's Probabilidad: 0.52 -> GANADOR: St John's
-Wisconsin vs Purdue Probabilidad: 0.55 -> GANADOR: Wisconsin
-ELITE 8: St John's vs Wisconsin Probabilidad: 0.54 -> GANADOR: Wisconsin
+      # RONDA 1:
+      Duke vs Arizona Probabilidad: 0.52 -> GANADOR: Arizona
+      Houston vs Purdue Probabilidad: 0.50 -> GANADOR: Purdue
+      Florida vs Maryland Probabilidad: 0.51 -> GANADOR: Florida
+      Auburn vs Texas A&M Probabilidad: 0.54 -> GANADOR: Texas A&M
+      Michigan St vs Iowa St Probabilidad: 0.53 -> GANADOR: Michigan St
+      St John's vs Texas Tech Probabilidad: 0.52 -> GANADOR: St John's
+      Tennessee vs Kentucky Probabilidad: 0.52 -> GANADOR: Tennessee
+      Alabama vs Wisconsin Probabilidad: 0.55 -> GANADOR: Wisconsin
+      RONDA 2: Florida vs Tennessee Probabilidad: 0.51 -> GANADOR: Tennessee
+      St John's vs Michigan St Probabilidad: 0.50 -> GANADOR: St John's
+      Wisconsin vs Texas A&M Probabilidad: 0.53 -> GANADOR: Wisconsin
+      Arizona vs Purdue Probabilidad: 0.55 -> GANADOR: Purdue
+      SWEET 16: Tennessee vs St John's Probabilidad: 0.52 -> GANADOR: St John's
+      Wisconsin vs Purdue Probabilidad: 0.55 -> GANADOR: Wisconsin
+      ELITE 8: St John's vs Wisconsin Probabilidad: 0.54 -> GANADOR: Wisconsin
+      
 No hay suficientes equipos para continuar (1 restantes)
 
 Cargando datos para el torneo femenino...
@@ -728,7 +730,8 @@ Columnas en cada archivo: Teams: ['TeamID', 'TeamName'] Seeds: ['Season', 'Seed'
 
 PREDICCIONES TORNEO FEMENINO 2025
 
-RONDA 1: South Carolina vs Maryland Probabilidad: 0.55 -> GANADOR: South Carolina
+# RONDA 1:
+South Carolina vs Maryland Probabilidad: 0.55 -> GANADOR: South Carolina
 Texas vs Ohio St Probabilidad: 0.52 -> GANADOR: Texas
 USC vs Kentucky Probabilidad: 0.53 -> GANADOR: USC
 UCLA vs Baylor Probabilidad: 0.55 -> GANADOR: UCLA
@@ -743,6 +746,7 @@ Duke vs Oklahoma Probabilidad: 0.52 -> GANADOR: Duke
 SWEET 16: South Carolina vs USC Probabilidad: 0.54 -> GANADOR: USC
 NC State vs Duke Probabilidad: 0.54 -> GANADOR: NC State
 ELITE 8: USC vs NC State Probabilidad: 0.51 -> GANADOR: USC
+
 No hay suficientes equipos para continuar (1 restantes)
 
 Desarrollado por: J.E. Carmona Alvarez & J. Ortiz-Aguilar
