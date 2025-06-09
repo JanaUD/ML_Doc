@@ -348,7 +348,8 @@ Filas: 378 | Columnas: 2 Columnas: ['TeamID', 'TeamName']
 
 Estadísticas descriptivas:
 
-image
+![image](https://github.com/user-attachments/assets/bdff03bd-8fa4-4b60-9994-f82118633914)
+
 
 4. Cálculo de las estadísticascon los datos relevantes del entrenamiento del modelo:
       def calculate_team_stats(regular_data):
@@ -426,440 +427,327 @@ image
         return team_stats
 
 5. Entrenamiento y resultados del modelo:
-      import pandas as pd
-    import numpy as np
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.model_selection import train_test_split
-    import xgboost as xgb
-    from itertools import combinations
-    
-    def load_and_validate_data(gender):
-        """Carga y valida los datos con manejo de errores mejorado"""
-        try:
-            prefix = gender
-            print(f"\nCargando datos para el torneo {'masculino' if gender == 'M' else 'femenino'}...")
-    
-            # Cargar archivos con verificación
-            teams = pd.read_csv(f'{prefix}Teams.csv')
-            seeds = pd.read_csv(f'{prefix}NCAATourneySeeds.csv')
-            regular = pd.read_csv(f'{prefix}RegularSeasonCompactResults.csv')  # Usamos versión compacta
-            tourney = pd.read_csv(f'{prefix}NCAATourneyCompactResults.csv')
-    
-            # Verificar columnas disponibles
-            print("\nColumnas en cada archivo:")
-            print(f"Teams: {teams.columns.tolist()}")
-            print(f"Seeds: {seeds.columns.tolist()}")
-            print(f"Regular: {regular.columns.tolist()}")
-            print(f"Tourney: {tourney.columns.tolist()}")
-    
-            # Renombrar columnas si es necesario (para compatibilidad)
-            if 'WTeamID' not in regular.columns:
-                if 'Winner' in regular.columns:  # Ejemplo de adaptación
-                    regular = regular.rename(columns={'Winner': 'WTeamID', 'Loser': 'LTeamID'})
-                else:
-                    raise ValueError("No se encontraron columnas de equipos ganadores/perdedores")
-    
-            return teams, seeds, regular, tourney
-    
-        except Exception as e:
-            print(f"Error cargando datos: {e}")
-            return None, None, None, None
-    
-    def build_simple_model(regular_data):
-        """Construye un modelo simple basado en semillas y puntuaciones"""
-        try:
-            # Calcular estadísticas básicas
-            win_stats = regular_data.groupby('WTeamID')['WScore'].mean().reset_index()
-            loss_stats = regular_data.groupby('LTeamID')['LScore'].mean().reset_index()
-    
-            team_stats = pd.merge(
-                win_stats.rename(columns={'WTeamID': 'TeamID', 'WScore': 'Offense'}),
-                loss_stats.rename(columns={'LTeamID': 'TeamID', 'LScore': 'Defense'}),
-                on='TeamID',
-                how='outer'
-            ).fillna(0)
-    
-            return team_stats
-    
-        except Exception as e:
-            print(f"Error construyendo modelo simple: {e}")
-            return None
-    
-    def predict_winners(team_stats, seeds, teams, current_season=2025):
-        """Predice ganadores usando un enfoque basado en semillas y estadísticas"""
-        try:
-            # Procesar semillas
-            seeds = seeds[seeds['Season'] == current_season].copy()
-            seeds['SeedNum'] = seeds['Seed'].str.extract('(\d+)').astype(int)
-    
-            # Combinar con estadísticas
-            predictions = seeds.merge(
-                team_stats,
-                on='TeamID',
-                how='left'
-            ).merge(
-                teams[['TeamID', 'TeamName']],
-                on='TeamID',
-                how='left'
-            )
-    
-            # Si faltan estadísticas, usar solo la semilla
-            predictions['Offense'] = predictions['Offense'].fillna(80 - predictions['SeedNum'])
-            predictions['Defense'] = predictions['Defense'].fillna(60 + predictions['SeedNum'])
-    
-            return predictions[['TeamID', 'TeamName', 'Seed', 'SeedNum', 'Offense', 'Defense']]
-    
-        except Exception as e:
-            print(f"Error generando predicciones: {e}")
-            return None
-    
-    def simulate_round(teams_df, round_name):
-        """Simula una ronda del torneo"""
-        try:
-            # Ordenar por semilla
-            sorted_teams = teams_df.sort_values('SeedNum')
-            winners = []
-            results = []
-    
-            # Determinar emparejamientos según la ronda
-            if round_name == "Ronda 1":
-                # Emparejar 1 vs 16, 2 vs 15, etc.
-                top = sorted_teams.iloc[:8]
-                bottom = sorted_teams.iloc[8:16].iloc[::-1]
-                matchups = list(zip(top.values, bottom.values))
-            elif round_name == "Ronda 2":
-                # Emparejar ganadores de Ronda 1
-                if len(sorted_teams) == 8:
-                    matchups = list(zip(sorted_teams.iloc[::2].values, sorted_teams.iloc[1::2].values))
-                else:
-                    matchups = []
-            elif round_name == "Sweet 16":
-                if len(sorted_teams) == 4:
-                    matchups = list(zip(sorted_teams.iloc[::2].values, sorted_teams.iloc[1::2].values))
-                else:
-                    matchups = []
-            elif round_name == "Elite 8":
-                if len(sorted_teams) == 2:
-                    matchups = [(sorted_teams.iloc[0].values, sorted_teams.iloc[1].values)]
-                else:
-                    matchups = []
-            else:
-                matchups = []
-    
-            for team1, team2 in matchups:
-                # Calcular probabilidad simple basada en semillas y estadísticas
-                prob = 0.5 + (team2[4] - team1[4])/100  # Ajuste basado en ofensa
-    
-                if prob >= 0.5:
-                    winner = team1
-                    prob = min(0.95, prob)  # Limitar probabilidad máxima
-                else:
-                    winner = team2
-                    prob = max(0.05, 1-prob)
-    
-                results.append({
-                    'Ronda': round_name,
-                    'Equipo1': team1[1],  # TeamName
-                    'Equipo2': team2[1],
-                    'Probabilidad': f"{prob:.2f}",
-                    'Ganador': winner[1]
-                })
-                winners.append(winner)
-    
-            # Crear DataFrames de resultados y ganadores
-            results_df = pd.DataFrame(results)
-            if winners:
-                winners_df = pd.DataFrame(winners, columns=teams_df.columns)
-            else:
-                winners_df = pd.DataFrame(columns=teams_df.columns)
-    
-            return results_df, winners_df
-    
-        except Exception as e:
-            print(f"Error en simulate_round: {e}")
-            return pd.DataFrame(), pd.DataFrame(columns=teams_df.columns)
-    
-    def display_round_results(results_df):
-        """Muestra los resultados de una ronda"""
-        try:
-            if results_df.empty:
-                print("\nNo hay resultados para mostrar en esta ronda.")
-                return
-    
-            if 'Ronda' in results_df.columns:
-                print(f"\n{results_df['Ronda'].iloc[0].upper()}:")
-            else:
-                print("\nResultados de la ronda:")
-    
-            for _, row in results_df.iterrows():
-                print(f"  {row['Equipo1']} vs {row['Equipo2']}")
-                print(f"  Probabilidad: {row['Probabilidad']} -> GANADOR: {row['Ganador']}")
-                print("  " + "-"*40)
-        except Exception as e:
-            print(f"Error mostrando resultados: {e}")
-    
-    def predict_tournament(gender):
-        """Predice el torneo completo para un género"""
-        try:
-            # Cargar datos
-            teams, seeds, regular, tourney = load_and_validate_data(gender)
-            if teams is None:
-                return
-    
-            # Construir modelo simple
-            team_stats = build_simple_model(regular)
-            if team_stats is None:
-                return
-    
-            # Predecir ganadores
-            predictions = predict_winners(team_stats, seeds, teams)
-            if predictions is None:
-                return
-    
-            # Simular rondas
-            round_names = ["Ronda 1", "Ronda 2", "Sweet 16", "Elite 8", "Final Four", "Final"]
-    
-            print(f"\n{'*'*50}")
-            print(f"PREDICCIONES TORNEO {'MASCULINO' if gender == 'M' else 'FEMENINO'} 2025")
-            print(f"{'*'*50}")
-    
-            current_teams = predictions.copy()
-    
-            for round_name in round_names:
-                if len(current_teams) < 2:
-                    print(f"\nNo hay suficientes equipos para continuar ({len(current_teams)} restantes)")
-                    break
-    
-                results, winners = simulate_round(current_teams, round_name)
-                display_round_results(results)
-                current_teams = winners
-    
-        except Exception as e:
-            print(f"Error en predict_tournament: {e}")
-    
-    # Ejecutar predicciones
-    print("PREDICCIÓN DE GANADORES POR RONDA - NCAA 2025")
-    predict_tournament('M')  # Torneo masculino
-    predict_tournament('W')  # Torneo femenino
-    
-    print("\nDesarrollado por: J.E. Carmona Alvarez & J. Ortiz-Aguilar")
+      
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+import xgboost as xgb
+from itertools import combinations
+import os
 
-    import pandas as pd
-    import numpy as np
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.model_selection import train_test_split
-    import xgboost as xgb
-    from itertools import combinations
+def load_and_validate_data(gender):
+    """Carga y valida los datos con manejo de errores mejorado"""
+    try:
+        prefix = gender
+        print(f"\nCargando datos para el torneo {'masculino' if gender == 'M' else 'femenino'}...")
+
+        # Cargar archivos con verificación
+        teams = pd.read_csv(f'{prefix}Teams.csv')
+        seeds = pd.read_csv(f'{prefix}NCAATourneySeeds.csv')
+        regular = pd.read_csv(f'{prefix}RegularSeasonCompactResults.csv')
+        tourney = pd.read_csv(f'{prefix}NCAATourneyCompactResults.csv')
+
+        return teams, seeds, regular, tourney
+
+    except Exception as e:
+        print(f"Error cargando datos: {e}")
+        return None, None, None, None
+
+def build_simple_model(regular_data):
+    """Construye un modelo simple basado en semillas y puntuaciones"""
+    try:
+        # Calcular estadísticas básicas
+        win_stats = regular_data.groupby('WTeamID').agg({
+            'WScore': ['mean', 'max', 'min'],
+            'LTeamID': 'count'
+        }).reset_index()
+        win_stats.columns = ['TeamID', 'OffenseAvg', 'OffenseMax', 'OffenseMin', 'Wins']
+
+        loss_stats = regular_data.groupby('LTeamID').agg({
+            'LScore': ['mean', 'max', 'min'],
+            'WTeamID': 'count'
+        }).reset_index()
+        loss_stats.columns = ['TeamID', 'DefenseAvg', 'DefenseMax', 'DefenseMin', 'Losses']
+
+        team_stats = pd.merge(
+            win_stats,
+            loss_stats,
+            on='TeamID',
+            how='outer'
+        ).fillna(0)
+
+        # Calcular porcentaje de victorias
+        team_stats['WinPct'] = team_stats['Wins'] / (team_stats['Wins'] + team_stats['Losses'])
+        team_stats['Strength'] = team_stats['OffenseAvg'] * 0.7 + team_stats['DefenseAvg'] * 0.3
+
+        return team_stats
+
+    except Exception as e:
+        print(f"Error construyendo modelo simple: {e}")
+        return None
+
+def predict_winners(team_stats, seeds, teams, current_season=2025):
+    """Predice ganadores usando un enfoque basado en semillas y estadísticas"""
+    try:
+        # Procesar semillas
+        seeds = seeds[seeds['Season'] == current_season].copy()
+        seeds['SeedNum'] = seeds['Seed'].str.extract('(\d+)').astype(int)
+
+        # Combinar con estadísticas y datos de equipos
+        predictions = seeds.merge(
+            team_stats,
+            on='TeamID',
+            how='left'
+        ).merge(
+            teams[['TeamID', 'TeamName']],
+            on='TeamID',
+            how='left'
+        )
+
+        # Si faltan estadísticas, usar valores basados en semilla
+        predictions['OffenseAvg'] = predictions['OffenseAvg'].fillna(80 - predictions['SeedNum'])
+        predictions['DefenseAvg'] = predictions['DefenseAvg'].fillna(60 + predictions['SeedNum'])
+        predictions['Strength'] = predictions['Strength'].fillna(
+            predictions['OffenseAvg'] * 0.7 + predictions['DefenseAvg'] * 0.3
+        )
+
+        return predictions
+
+    except Exception as e:
+        print(f"Error generando predicciones: {e}")
+        return None
+
+def display_round_results(results_df):
+    """Muestra los resultados de una ronda de forma legible"""
+    if results_df.empty:
+        print("\nNo hay resultados para mostrar en esta ronda.")
+        return
+
+    print(f"\n{results_df['Round'].iloc[0].upper()}:")
+    print("-" * 60)
     
-    def load_and_validate_data(gender):
-        """Carga y valida los datos con manejo de errores mejorado"""
-        try:
-            prefix = gender
-            print(f"\nCargando datos para el torneo {'masculino' if gender == 'M' else 'femenino'}...")
-    
-            # Cargar archivos con verificación
-            teams = pd.read_csv(f'{prefix}Teams.csv')
-            seeds = pd.read_csv(f'{prefix}NCAATourneySeeds.csv')
-            regular = pd.read_csv(f'{prefix}RegularSeasonCompactResults.csv')  # Usamos versión compacta
-            tourney = pd.read_csv(f'{prefix}NCAATourneyCompactResults.csv')
-    
-            # Verificar columnas disponibles
-            print("\nColumnas en cada archivo:")
-            print(f"Teams: {teams.columns.tolist()}")
-            print(f"Seeds: {seeds.columns.tolist()}")
-            print(f"Regular: {regular.columns.tolist()}")
-            print(f"Tourney: {tourney.columns.tolist()}")
-    
-            # Renombrar columnas si es necesario (para compatibilidad)
-            if 'WTeamID' not in regular.columns:
-                if 'Winner' in regular.columns:  # Ejemplo de adaptación
-                    regular = regular.rename(columns={'Winner': 'WTeamID', 'Loser': 'LTeamID'})
-                else:
-                    raise ValueError("No se encontraron columnas de equipos ganadores/perdedores")
-    
-            return teams, seeds, regular, tourney
-    
-        except Exception as e:
-            print(f"Error cargando datos: {e}")
-            return None, None, None, None
-    
-    def build_simple_model(regular_data):
-        """Construye un modelo simple basado en semillas y puntuaciones"""
-        try:
-            # Calcular estadísticas básicas
-            win_stats = regular_data.groupby('WTeamID')['WScore'].mean().reset_index()
-            loss_stats = regular_data.groupby('LTeamID')['LScore'].mean().reset_index()
-    
-            team_stats = pd.merge(
-                win_stats.rename(columns={'WTeamID': 'TeamID', 'WScore': 'Offense'}),
-                loss_stats.rename(columns={'LTeamID': 'TeamID', 'LScore': 'Defense'}),
-                on='TeamID',
-                how='outer'
-            ).fillna(0)
-    
-            return team_stats
-    
-        except Exception as e:
-            print(f"Error construyendo modelo simple: {e}")
-            return None
-    
-    def predict_winners(team_stats, seeds, teams, current_season=2025):
-        """Predice ganadores usando un enfoque basado en semillas y estadísticas"""
-        try:
-            # Procesar semillas
-            seeds = seeds[seeds['Season'] == current_season].copy()
-            seeds['SeedNum'] = seeds['Seed'].str.extract('(\d+)').astype(int)
-    
-            # Combinar con estadísticas
-            predictions = seeds.merge(
-                team_stats,
-                on='TeamID',
-                how='left'
-            ).merge(
-                teams[['TeamID', 'TeamName']],
-                on='TeamID',
-                how='left'
-            )
-    
-            # Si faltan estadísticas, usar solo la semilla
-            predictions['Offense'] = predictions['Offense'].fillna(80 - predictions['SeedNum'])
-            predictions['Defense'] = predictions['Defense'].fillna(60 + predictions['SeedNum'])
-    
-            return predictions[['TeamID', 'TeamName', 'Seed', 'SeedNum', 'Offense', 'Defense']]
-    
-        except Exception as e:
-            print(f"Error generando predicciones: {e}")
-            return None
-    
-    def simulate_round(teams_df, round_name):
-        """Simula una ronda del torneo"""
-        try:
-            # Ordenar por semilla
-            sorted_teams = teams_df.sort_values('SeedNum')
-            winners = []
-            results = []
-    
-            # Determinar emparejamientos según la ronda
-            if round_name == "Ronda 1":
-                # Emparejar 1 vs 16, 2 vs 15, etc.
-                top = sorted_teams.iloc[:8]
-                bottom = sorted_teams.iloc[8:16].iloc[::-1]
-                matchups = list(zip(top.values, bottom.values))
-            elif round_name == "Ronda 2":
-                # Emparejar ganadores de Ronda 1
-                if len(sorted_teams) == 8:
-                    matchups = list(zip(sorted_teams.iloc[::2].values, sorted_teams.iloc[1::2].values))
-                else:
-                    matchups = []
-            elif round_name == "Sweet 16":
-                if len(sorted_teams) == 4:
-                    matchups = list(zip(sorted_teams.iloc[::2].values, sorted_teams.iloc[1::2].values))
-                else:
-                    matchups = []
-            elif round_name == "Elite 8":
-                if len(sorted_teams) == 2:
-                    matchups = [(sorted_teams.iloc[0].values, sorted_teams.iloc[1].values)]
-                else:
-                    matchups = []
+    for _, row in results_df.iterrows():
+        print(f"{row['Team1_Name']} (Semilla {row['Team1_Seed']}) vs {row['Team2_Name']} (Semilla {row['Team2_Seed']})")
+        print(f"Probabilidad: {row['Probability']:.2f} -> GANADOR: {row['Predicted_Winner_Name']}")
+        print(f"Estadísticas: Ofensa {row['Team1_OffenseAvg']:.1f}-{row['Team2_OffenseAvg']:.1f} | Defensa {row['Team1_DefenseAvg']:.1f}-{row['Team2_DefenseAvg']:.1f}")
+        print("-" * 60)
+
+def simulate_round(teams_df, round_name):
+    """Simula una ronda del torneo y devuelve resultados detallados"""
+    try:
+        # Ordenar por semilla
+        sorted_teams = teams_df.sort_values('SeedNum')
+        winners = []
+        detailed_results = []
+
+        # Determinar emparejamientos según la ronda
+        if round_name == "Ronda 1":
+            top = sorted_teams.iloc[:8]
+            bottom = sorted_teams.iloc[8:16].iloc[::-1]
+            matchups = list(zip(top.iterrows(), bottom.iterrows()))
+        elif round_name == "Ronda 2":
+            if len(sorted_teams) == 8:
+                matchups = list(zip(sorted_teams.iloc[::2].iterrows(), sorted_teams.iloc[1::2].iterrows()))
             else:
                 matchups = []
-    
-            for team1, team2 in matchups:
-                # Calcular probabilidad simple basada en semillas y estadísticas
-                prob = 0.5 + (team2[4] - team1[4])/100  # Ajuste basado en ofensa
-    
-                if prob >= 0.5:
-                    winner = team1
-                    prob = min(0.95, prob)  # Limitar probabilidad máxima
-                else:
-                    winner = team2
-                    prob = max(0.05, 1-prob)
-    
-                results.append({
-                    'Ronda': round_name,
-                    'Equipo1': team1[1],  # TeamName
-                    'Equipo2': team2[1],
-                    'Probabilidad': f"{prob:.2f}",
-                    'Ganador': winner[1]
-                })
-                winners.append(winner)
-    
-            # Crear DataFrames de resultados y ganadores
-            results_df = pd.DataFrame(results)
-            if winners:
-                winners_df = pd.DataFrame(winners, columns=teams_df.columns)
+        elif round_name == "Sweet 16":
+            if len(sorted_teams) == 4:
+                matchups = list(zip(sorted_teams.iloc[::2].iterrows(), sorted_teams.iloc[1::2].iterrows()))
             else:
-                winners_df = pd.DataFrame(columns=teams_df.columns)
-    
-            return results_df, winners_df
-    
-        except Exception as e:
-            print(f"Error en simulate_round: {e}")
-            return pd.DataFrame(), pd.DataFrame(columns=teams_df.columns)
-    
-    def display_round_results(results_df):
-        """Muestra los resultados de una ronda"""
-        try:
-            if results_df.empty:
-                print("\nNo hay resultados para mostrar en esta ronda.")
-                return
-    
-            if 'Ronda' in results_df.columns:
-                print(f"\n{results_df['Ronda'].iloc[0].upper()}:")
+                matchups = []
+        elif round_name == "Elite 8":
+            if len(sorted_teams) == 2:
+                matchups = [(sorted_teams.iloc[0:1].iterrows()._next(), sorted_teams.iloc[1:2].iterrows().next_())]
             else:
-                print("\nResultados de la ronda:")
+                matchups = []
+        else:
+            matchups = []
+
+        for (, team1), (, team2) in matchups:
+            # Calcular probabilidad basada en estadísticas
+            prob = 1 / (1 + np.exp(-(team1['Strength'] - team2['Strength'])/10))
+            
+            if prob >= 0.5:
+                winner = team1
+                winner_prob = prob
+            else:
+                winner = team2
+                winner_prob = 1 - prob
+
+            # Resultados detallados para CSV y visualización
+            detailed_results.append({
+                'Round': round_name,
+                'Team1_ID': team1['TeamID'],
+                'Team1_Name': team1['TeamName'],
+                'Team1_Seed': team1['Seed'],
+                'Team1_OffenseAvg': team1['OffenseAvg'],
+                'Team1_DefenseAvg': team1['DefenseAvg'],
+                'Team1_Strength': team1['Strength'],
+                'Team2_ID': team2['TeamID'],
+                'Team2_Name': team2['TeamName'],
+                'Team2_Seed': team2['Seed'],
+                'Team2_OffenseAvg': team2['OffenseAvg'],
+                'Team2_DefenseAvg': team2['DefenseAvg'],
+                'Team2_Strength': team2['Strength'],
+                'Probability': winner_prob,
+                'Predicted_Winner_ID': winner['TeamID'],
+                'Predicted_Winner_Name': winner['TeamName']
+            })
+
+            winners.append(winner)
+
+        # Crear DataFrames
+        detailed_df = pd.DataFrame(detailed_results)
+        
+        if winners:
+            winners_df = pd.DataFrame(winners)
+        else:
+            winners_df = pd.DataFrame(columns=teams_df.columns)
+
+        return winners_df, detailed_df
+
+    except Exception as e:
+        print(f"Error en simulate_round: {e}")
+        return pd.DataFrame(columns=teams_df.columns), pd.DataFrame()
+
+def save_predictions_to_csv(gender, all_predictions, team_stats):
+    """Guarda todas las predicciones en un archivo CSV"""
+    try:
+        # Combinar todas las predicciones
+        full_predictions = pd.concat(all_predictions, ignore_index=True)
+        
+        # Nombre del archivo
+        filename = f'ncaa_{gender}_predictions_2025.csv'
+        
+        # Guardar CSV
+        full_predictions.to_csv(filename, index=False)
+        print(f"\nPredicciones guardadas en {filename}")
+        
+        return filename
+        
+    except Exception as e:
+        print(f"Error guardando predicciones: {e}")
+        return None
+
+def predict_tournament(gender):
+    """Predice el torneo completo para un género y guarda resultados"""
+    try:
+        # Cargar datos
+        teams, seeds, regular, tourney = load_and_validate_data(gender)
+        if teams is None:
+            return None
+
+        # Construir modelo simple
+        team_stats = build_simple_model(regular)
+        if team_stats is None:
+            return None
+
+        # Predecir ganadores
+        predictions = predict_winners(team_stats, seeds, teams)
+        if predictions is None:
+            return None
+
+        # Simular rondas
+        round_names = ["Ronda 1", "Ronda 2", "Sweet 16", "Elite 8", "Final"]
+        all_detailed_results = []
+        current_teams = predictions.copy()
+
+        print(f"\n{'*'*50}")
+        print(f"PREDICCIONES TORNEO {'MASCULINO' if gender == 'M' else 'FEMENINO'} 2025")
+        print(f"{'*'*50}")
+
+        for round_name in round_names:
+            if len(current_teams) < 2:
+                print(f"\nNo hay suficientes equipos para continuar ({len(current_teams)} restantes)")
+                break
+
+            winners, detailed = simulate_round(current_teams, round_name)
+            
+            if not detailed.empty:
+                display_round_results(detailed)
+                all_detailed_results.append(detailed)
+            
+            current_teams = winners
+
+        # Guardar todas las predicciones en CSV
+        if all_detailed_results:
+            csv_file = save_predictions_to_csv(gender, all_detailed_results, team_stats)
+            return csv_file
+        else:
+            print("\nNo se generaron predicciones para guardar.")
+            return None
+
+    except Exception as e:
+        print(f"Error en predict_tournament: {e}")
+        return None
+
+# Ejecutar predicciones y guardar resultados
+print("PREDICCIÓN DE GANADORES POR RONDA - NCAA 2025")
+
+# Predecir torneo masculino y femenino
+male_predictions_file = predict_tournament('M')
+female_predictions_file = predict_tournament('W')
+
+print("\nResumen de archivos generados:")
+if male_predictions_file:
+    print(f"- Predicciones masculinas: {male_predictions_file}")
+if female_predictions_file:
+    print(f"- Predicciones femeninas: {female_predictions_file}")
+
+print("\nDesarrollado por: J.E. Carmona Alvarez & J. Ortiz-Aguilar")
+
+RESULTADOS:
+
+PREDICCIÓN DE GANADORES POR RONDA - NCAA 2025
+
+Cargando datos para el torneo masculino...
+
+Columnas en cada archivo: Teams: ['TeamID', 'TeamName', 'FirstD1Season', 'LastD1Season'] Seeds: ['Season', 'Seed', 'TeamID'] Regular: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT'] Tourney: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT']
+
+PREDICCIONES TORNEO MASCULINO 2025
+
+RONDA 1: Duke vs Arizona Probabilidad: 0.52 -> GANADOR: Arizona
+Houston vs Purdue Probabilidad: 0.50 -> GANADOR: Purdue
+Florida vs Maryland Probabilidad: 0.51 -> GANADOR: Florida
+Auburn vs Texas A&M Probabilidad: 0.54 -> GANADOR: Texas A&M
+Michigan St vs Iowa St Probabilidad: 0.53 -> GANADOR: Michigan St
+St John's vs Texas Tech Probabilidad: 0.52 -> GANADOR: St John's
+Tennessee vs Kentucky Probabilidad: 0.52 -> GANADOR: Tennessee
+Alabama vs Wisconsin Probabilidad: 0.55 -> GANADOR: Wisconsin
+RONDA 2: Florida vs Tennessee Probabilidad: 0.51 -> GANADOR: Tennessee
+St John's vs Michigan St Probabilidad: 0.50 -> GANADOR: St John's
+Wisconsin vs Texas A&M Probabilidad: 0.53 -> GANADOR: Wisconsin
+Arizona vs Purdue Probabilidad: 0.55 -> GANADOR: Purdue
+SWEET 16: Tennessee vs St John's Probabilidad: 0.52 -> GANADOR: St John's
+Wisconsin vs Purdue Probabilidad: 0.55 -> GANADOR: Wisconsin
+ELITE 8: St John's vs Wisconsin Probabilidad: 0.54 -> GANADOR: Wisconsin
+No hay suficientes equipos para continuar (1 restantes)
+
+Cargando datos para el torneo femenino...
+
+Columnas en cada archivo: Teams: ['TeamID', 'TeamName'] Seeds: ['Season', 'Seed', 'TeamID'] Regular: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT'] Tourney: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT']
+
+PREDICCIONES TORNEO FEMENINO 2025
+
+RONDA 1: South Carolina vs Maryland Probabilidad: 0.55 -> GANADOR: South Carolina
+Texas vs Ohio St Probabilidad: 0.52 -> GANADOR: Texas
+USC vs Kentucky Probabilidad: 0.53 -> GANADOR: USC
+UCLA vs Baylor Probabilidad: 0.55 -> GANADOR: UCLA
+NC State vs LSU Probabilidad: 0.51 -> GANADOR: NC State
+Connecticut vs Oklahoma Probabilidad: 0.53 -> GANADOR: Oklahoma
+TCU vs Notre Dame Probabilidad: 0.54 -> GANADOR: TCU
+Duke vs North Carolina Probabilidad: 0.53 -> GANADOR: Duke
+RONDA 2: South Carolina vs Texas Probabilidad: 0.50 -> GANADOR: South Carolina
+USC vs UCLA Probabilidad: 0.53 -> GANADOR: USC
+NC State vs TCU Probabilidad: 0.51 -> GANADOR: NC State
+Duke vs Oklahoma Probabilidad: 0.52 -> GANADOR: Duke
+SWEET 16: South Carolina vs USC Probabilidad: 0.54 -> GANADOR: USC
+NC State vs Duke Probabilidad: 0.54 -> GANADOR: NC State
+ELITE 8: USC vs NC State Probabilidad: 0.51 -> GANADOR: USC
+No hay suficientes equipos para continuar (1 restantes)
+
+Desarrollado por: J.E. Carmona Alvarez & J. Ortiz-Aguilar
     
-            for _, row in results_df.iterrows():
-                print(f"  {row['Equipo1']} vs {row['Equipo2']}")
-                print(f"  Probabilidad: {row['Probabilidad']} -> GANADOR: {row['Ganador']}")
-                print("  " + "-"*40)
-        except Exception as e:
-            print(f"Error mostrando resultados: {e}")
-    
-    def predict_tournament(gender):
-        """Predice el torneo completo para un género"""
-        try:
-            # Cargar datos
-            teams, seeds, regular, tourney = load_and_validate_data(gender)
-            if teams is None:
-                return
-    
-            # Construir modelo simple
-            team_stats = build_simple_model(regular)
-            if team_stats is None:
-                return
-    
-            # Predecir ganadores
-            predictions = predict_winners(team_stats, seeds, teams)
-            if predictions is None:
-                return
-    
-            # Simular rondas
-            round_names = ["Ronda 1", "Ronda 2", "Sweet 16", "Elite 8", "Final Four", "Final"]
-    
-            print(f"\n{'*'*50}")
-            print(f"PREDICCIONES TORNEO {'MASCULINO' if gender == 'M' else 'FEMENINO'} 2025")
-            print(f"{'*'*50}")
-    
-            current_teams = predictions.copy()
-    
-            for round_name in round_names:
-                if len(current_teams) < 2:
-                    print(f"\nNo hay suficientes equipos para continuar ({len(current_teams)} restantes)")
-                    break
-    
-                results, winners = simulate_round(current_teams, round_name)
-                display_round_results(results)
-                current_teams = winners
-    
-        except Exception as e:
-            print(f"Error en predict_tournament: {e}")
-    
-    # Ejecutar predicciones
-    print("PREDICCIÓN DE GANADORES POR RONDA - NCAA 2025")
-    predict_tournament('M')  # Torneo masculino
-    predict_tournament('W')  # Torneo femenino
-    
-    print("\nDesarrollado por: J.E. Carmona Alvarez & J. Ortiz-Aguilar")
 
 
