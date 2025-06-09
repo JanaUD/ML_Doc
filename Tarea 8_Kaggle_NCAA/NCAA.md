@@ -1,4 +1,4 @@
-Competición_MMLM2025_NCAA 2025
+![image](https://github.com/user-attachments/assets/041725b4-fce2-4ba5-9c5f-9046b7e181c7)Competición_MMLM2025_NCAA 2025
 
 COMPETENCIA DE KAGGEL March Machine Learning Mania 2025 Forecast the 2025 NCAA Basketball Tournaments
 
@@ -268,68 +268,81 @@ RESULTADOS:
 ANÁLISIS DE DATOS MASCULINO
 
 Temporada Regular Masculino
-image
+
+![image](https://github.com/user-attachments/assets/c756dd84-60f6-40b5-8834-a3b0748c1c34)
+
 
 Filas: 118882 | Columnas: 34 Columnas: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT', 'WFGM', 'WFGA', 'WFGM3', 'WFGA3', 'WFTM', 'WFTA', 'WOR', 'WDR', 'WAst', 'WTO', 'WStl', 'WBlk', 'WPF', 'LFGM', 'LFGA', 'LFGM3', 'LFGA3', 'LFTM', 'LFTA', 'LOR', 'LDR', 'LAst', 'LTO', 'LStl', 'LBlk', 'LPF']
 
 Estadísticas descriptivas:
 
-image
+![image](https://github.com/user-attachments/assets/062fc776-fd1d-454c-aff8-e39e247715cd)
+
 
 Torneo NCAA Masculino
-image
+
+![image](https://github.com/user-attachments/assets/ff91a729-b47f-4968-a0dc-2a431a7a8b2f)
 
 Filas: 2518 | Columnas: 8 Columnas: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT']
 
 Estadísticas descriptivas:
 
-image
+![image](https://github.com/user-attachments/assets/55d8c2f1-f773-4263-9dab-ded941560b7a)
 
 Semillas del Torneo Masculino
-image
+
+![image](https://github.com/user-attachments/assets/52df46de-bb3f-4cee-844d-01cb6f545be6)
 
 Filas: 2626 | Columnas: 3 Columnas: ['Season', 'Seed', 'TeamID']
 
 Estadísticas descriptivas:
 
-image
+![image](https://github.com/user-attachments/assets/7ebfb7d3-38b6-47f2-ac11-58fab62eed9c)
+
 
 Equipos Masculino
-image
+
+![image](https://github.com/user-attachments/assets/39ba43d6-03e0-4582-a4e7-fb4a5e5a1a90)
 
 Filas: 380 | Columnas: 4 Columnas: ['TeamID', 'TeamName', 'FirstD1Season', 'LastD1Season']
 
 Estadísticas descriptivas:
 
-image
+![image](https://github.com/user-attachments/assets/daf5c6b9-820d-409f-b82d-3aa50626abbc)
 
 ANÁLISIS DE DATOS FEMENINO
 
 Temporada Regular Femenino
-image
+
+![image](https://github.com/user-attachments/assets/15643c93-e22a-4cec-ae88-5b7aead07534)
+
 
 Filas: 81708 | Columnas: 34 Columnas: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT', 'WFGM', 'WFGA', 'WFGM3', 'WFGA3', 'WFTM', 'WFTA', 'WOR', 'WDR', 'WAst', 'WTO', 'WStl', 'WBlk', 'WPF', 'LFGM', 'LFGA', 'LFGM3', 'LFGA3', 'LFTM', 'LFTA', 'LOR', 'LDR', 'LAst', 'LTO', 'LStl', 'LBlk', 'LPF']
 
 Torneo NCAA Femenino
-image
+
+![image](https://github.com/user-attachments/assets/7f7921a2-f2dd-45c2-aa8e-e197e3383c2c)
 
 Filas: 1650 | Columnas: 8 Columnas: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT']
 
 Estadísticas descriptivas:
 
-image
+![image](https://github.com/user-attachments/assets/7490b8f6-ad23-4106-b796-3b9732cf4cc6)
 
 Semillas del Torneo Femenino
-image
+
+![image](https://github.com/user-attachments/assets/0124c3eb-9aa0-4ef3-b1c5-98a5b6344856)
+
 
 Filas: 1744 | Columnas: 3 Columnas: ['Season', 'Seed', 'TeamID']
 
 Estadísticas descriptivas:
 
-image
+![image](https://github.com/user-attachments/assets/4e5436d5-a1bf-45eb-b023-573c2676a25e)
 
 Equipos Femenino
-image
+
+![image](https://github.com/user-attachments/assets/9b425cf9-cb69-4784-92f7-936faa0752a1)
 
 Filas: 378 | Columnas: 2 Columnas: ['TeamID', 'TeamName']
 
