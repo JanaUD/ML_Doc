@@ -180,34 +180,39 @@ RESULTADOS
 
 Temporada Regular (118882 registros):
 
-![image](https://github.com/user-attachments/assets/30b66b35-c487-4943-9810-af862d8dd16b)
+      ![image](https://github.com/user-attachments/assets/30b66b35-c487-4943-9810-af862d8dd16b)
 
 Columnas disponibles: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT', 'WFGM', 'WFGA', 'WFGM3', 'WFGA3', 'WFTM', 'WFTA', 'WOR', 'WDR', 'WAst', 'WTO', 'WStl', 'WBlk', 'WPF', 'LFGM', 'LFGA', 'LFGM3', 'LFGA3', 'LFTM', 'LFTA', 'LOR', 'LDR', 'LAst', 'LTO', 'LStl', 'LBlk', 'LPF']
 
 Torneo NCAA (2518 registros):
-![image](https://github.com/user-attachments/assets/a868ad3d-4b2c-441d-9ac7-1096b65e59cc)
+
+      ![image](https://github.com/user-attachments/assets/a868ad3d-4b2c-441d-9ac7-1096b65e59cc)
 
 Columnas disponibles: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT']
 
 Semillas del Torneo (2626 registros):
-![image](https://github.com/user-attachments/assets/34d083b1-8d89-4287-893b-4699c5926940)
+
+      ![image](https://github.com/user-attachments/assets/34d083b1-8d89-4287-893b-4699c5926940)
 
 Columnas disponibles: ['Season', 'Seed', 'TeamID']
 
 === DATOS FEMENINO ===
 
 Temporada Regular (81708 registros):
-image
+
+      ![image](https://github.com/user-attachments/assets/00213c12-fa91-4ebc-8dee-cc0adca18ed7)
 
 Columnas disponibles: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT', 'WFGM', 'WFGA', 'WFGM3', 'WFGA3', 'WFTM', 'WFTA', 'WOR', 'WDR', 'WAst', 'WTO', 'WStl', 'WBlk', 'WPF', 'LFGM', 'LFGA', 'LFGM3', 'LFGA3', 'LFTM', 'LFTA', 'LOR', 'LDR', 'LAst', 'LTO', 'LStl', 'LBlk', 'LPF']
 
 Torneo NCAA (1650 registros):
-![image](https://github.com/user-attachments/assets/e8348e3c-10b5-437c-b794-566bf72588f0)
+
+      ![image](https://github.com/user-attachments/assets/6ddfcdc9-19db-4c65-a433-c1d9e9b1bba7)
 
 Columnas disponibles: ['Season', 'DayNum', 'WTeamID', 'WScore', 'LTeamID', 'LScore', 'WLoc', 'NumOT']
 
 Semillas del Torneo (1744 registros):
-![image](https://github.com/user-attachments/assets/7fa3f459-3471-45b0-99f0-3c4a32ffddbf)
+
+      ![image](https://github.com/user-attachments/assets/18c20f25-e442-4c5a-825a-03405b6acaae)
 
 Columnas disponibles: ['Season', 'Seed', 'TeamID']
 
